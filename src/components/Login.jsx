@@ -8,8 +8,20 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const { signIn } = useAuth()
+  const { signIn, signInWithGoogle } = useAuth()
   const navigate = useNavigate()
+
+  const handleGoogleLogin = async () => {
+    try {
+      setLoading(true)
+      const { error } = await signInWithGoogle()
+      if (error) throw error
+      // No navigation needed as OAuth redirects
+    } catch (error) {
+      setError(error.message)
+      setLoading(false)
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -56,6 +68,22 @@ export default function Login() {
           </div>
           <button type="submit" disabled={loading} className="auth-button">
             {loading ? 'Logging in...' : 'Login'}
+          </button>
+
+          <div className="divider">or</div>
+
+          <button
+            type="button"
+            disabled={loading}
+            className="auth-button google-button"
+            onClick={handleGoogleLogin}
+          >
+            <img
+              src="https://www.google.com/favicon.ico"
+              alt="Google"
+              className="google-icon"
+            />
+            Continue with Google
           </button>
         </form>
         <p className="auth-link">

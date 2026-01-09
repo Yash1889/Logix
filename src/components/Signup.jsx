@@ -10,8 +10,19 @@ export default function Signup() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
-  const { signUp } = useAuth()
+  const { signUp, signInWithGoogle } = useAuth()
   const navigate = useNavigate()
+
+  const handleGoogleLogin = async () => {
+    try {
+      setLoading(true)
+      const { error } = await signInWithGoogle()
+      if (error) throw error
+    } catch (error) {
+      setError(error.message)
+      setLoading(false)
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -93,6 +104,22 @@ export default function Signup() {
           </div>
           <button type="submit" disabled={loading} className="auth-button">
             {loading ? 'Creating account...' : 'Sign Up'}
+          </button>
+
+          <div className="divider">or</div>
+
+          <button
+            type="button"
+            disabled={loading}
+            className="auth-button google-button"
+            onClick={handleGoogleLogin}
+          >
+            <img
+              src="https://www.google.com/favicon.ico"
+              alt="Google"
+              className="google-icon"
+            />
+            Continue with Google
           </button>
         </form>
         <p className="auth-link">

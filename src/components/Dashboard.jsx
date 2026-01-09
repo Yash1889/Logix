@@ -51,6 +51,12 @@ export default function Dashboard() {
               <span className="info-label">Login Status:</span>
               <span className="info-value status-active">Logged In</span>
             </div>
+            <div className="info-item">
+              <span className="info-label">Login Provider:</span>
+              <span className="info-value" style={{ textTransform: 'capitalize' }}>
+                {user.app_metadata?.provider || 'Email'}
+              </span>
+            </div>
           </div>
 
           {profile && (
