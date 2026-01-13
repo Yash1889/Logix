@@ -51,7 +51,7 @@ export default function Signup() {
       setLoading(false)
       // Redirect to dashboard after successful signup
       setTimeout(() => {
-        navigate('/dashboard')
+        navigate('/')
       }, 1500)
     }
   }

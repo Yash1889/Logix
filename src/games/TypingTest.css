@@ -1,0 +1,96 @@
+.typing-test-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.typing-area {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+}
+
+.typing-text-display {
+    font-size: 1.5rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    font-family: monospace;
+    margin-bottom: 20px;
+    user-select: none;
+    min-height: 200px;
+}
+
+.char {
+    position: relative;
+}
+
+.char.correct {
+    color: var(--text-primary);
+}
+
+.char.wrong {
+    color: #ef4444;
+    /* Red */
+    text-decoration: underline;
+}
+
+.char.current {
+    border-left: 2px solid var(--primary);
+    animation: blink 1s infinite;
+}
+
+.typing-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    /* Hidden input overlay */
+    cursor: default;
+    resize: none;
+}
+
+.typing-result {
+    text-align: center;
+}
+
+.typing-result h1 {
+    font-size: 5rem;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+.typing-result p {
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+}
+
+.typing-btn {
+    padding: 12px 24px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.typing-btn.primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.typing-btn.primary:hover {
+    background-color: var(--primary-hover);
+}
+
+@keyframes blink {
+    50% {
+        border-color: transparent;
+    }
+}

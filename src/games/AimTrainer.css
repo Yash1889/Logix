@@ -1,0 +1,94 @@
+.aim-trainer-container {
+    width: 100%;
+    height: 500px;
+    position: relative;
+    background-color: var(--bg-card);
+    user-select: none;
+    overflow: hidden;
+    cursor: crosshair;
+}
+
+.aim-overlay,
+.aim-result {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.aim-icon-large {
+    color: var(--primary);
+    margin-bottom: 20px;
+}
+
+.aim-btn {
+    margin-top: 20px;
+    padding: 12px 24px;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.aim-play-area {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.aim-target {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    /* Center the target on coords */
+    color: var(--primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.aim-target.start {
+    animation: pulse 2s infinite;
+}
+
+.aim-bullseye {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.aim-counter {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+@keyframes pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}

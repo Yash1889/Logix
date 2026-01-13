@@ -1,0 +1,96 @@
+.verbal-memory-container {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.vm-btn {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    font-weight: 600;
+    transition: all 0.2s;
+    color: white;
+}
+
+.vm-btn.primary {
+    background-color: var(--primary);
+}
+
+.vm-btn.primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.vm-btn.large {
+    padding: 16px 32px;
+    font-size: 1.5rem;
+}
+
+.vm-play-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+}
+
+.vm-word {
+    font-size: 4rem;
+    font-weight: 700;
+    color: white;
+    margin: 20px 0;
+}
+
+.vm-stats {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+}
+
+.vm-actions {
+    display: flex;
+    gap: 20px;
+}
+
+.vm-btn.answer {
+    width: 140px;
+    height: 50px;
+}
+
+.vm-btn.seen {
+    background-color: #f59e0b;
+    /* Yellow/Orange */
+    color: black;
+}
+
+.vm-btn.seen:hover {
+    background-color: #d97706;
+}
+
+.vm-btn.new {
+    background-color: var(--primary);
+}
+
+.vm-btn.new:hover {
+    background-color: var(--primary-hover);
+}
+
+.vm-result-screen {
+    text-align: center;
+}
+
+.vm-result-screen h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 8px;
+}
+
+.vm-result-screen p {
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+}

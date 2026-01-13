@@ -1,0 +1,62 @@
+.reaction-game-area {
+    width: 100%;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    user-select: none;
+}
+
+.reaction-content {
+    text-align: center;
+    color: white;
+    pointer-events: none;
+    /* Let clicks pass through to container */
+}
+
+.reaction-content h1 {
+    font-size: 5rem;
+    font-weight: 800;
+    margin: 10px 0;
+}
+
+.reaction-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+}
+
+.reaction-content p {
+    font-size: 1.25rem;
+    opacity: 0.9;
+}
+
+.reaction-icon {
+    margin-bottom: 20px;
+    opacity: 0.9;
+}
+
+/* States */
+.reaction-game-area.waiting {
+    background-color: var(--primary);
+}
+
+.reaction-game-area.ready {
+    background-color: #ef4444;
+    /* Red */
+}
+
+.reaction-game-area.now {
+    background-color: #22c55e;
+    /* Green */
+}
+
+.reaction-game-area.result {
+    background-color: var(--primary);
+}
+
+.reaction-game-area.early {
+    background-color: #f59e0b;
+    /* Orange/Yellow */
+}

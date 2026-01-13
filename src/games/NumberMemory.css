@@ -1,0 +1,105 @@
+.number-memory-container {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.nm-btn {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.nm-btn.primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.nm-btn.primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.nm-number {
+    font-size: 4rem;
+    font-weight: 700;
+    color: white;
+}
+
+.nm-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.nm-input {
+    font-size: 2rem;
+    padding: 12px;
+    text-align: center;
+    background-color: var(--bg-hover);
+    border: 2px solid var(--border);
+    color: white;
+    border-radius: 8px;
+    outline: none;
+    width: 300px;
+}
+
+.nm-input:focus {
+    border-color: var(--primary);
+}
+
+.nm-result {
+    text-align: center;
+}
+
+.nm-comparison {
+    display: flex;
+    gap: 40px;
+    margin: 30px 0;
+}
+
+.nm-val span {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.nm-val p {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.nm-val.wrong p {
+    color: #ef4444;
+    /* red */
+    text-decoration: line-through;
+}
+
+.nm-timer-bar {
+    height: 4px;
+    background-color: white;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation-name: timer;
+    animation-timing-function: linear;
+}
+
+@keyframes timer {
+    from {
+        width: 100%;
+    }
+
+    to {
+        width: 0%;
+    }
+}
