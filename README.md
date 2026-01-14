@@ -1,146 +1,75 @@
-# Logix Auth - Supabase Authentication System
+# Human Benchmark Platform
 
-A production-grade Login & Signup system using Supabase with React frontend.
+A premium, production-grade cognitive testing platform built with React and Supabase. This application allows users to test their reaction time, memory, and aiming skills, featuring a seamless hybrid score synchronization system.
 
-## Features
+## 🎮 Features
 
-- ✅ Email + Password Authentication
-- ✅ Signup with profile creation
-- ✅ Login/Logout functionality
-- ✅ Session persistence (user stays logged in on refresh)
-- ✅ Protected routes
-- ✅ Dashboard showing user information
-- ✅ Row Level Security (RLS) policies
-- ✅ Clean, extensible architecture for future OAuth integration
+### 🧠 Cognitive Tests
+Includes 7 fully implemented games:
+- **Reaction Time**: Measure your visual reflexes down to the millisecond.
+- **Visual Memory**: Memorize increasingly complex patterns of tiles.
+- **Number Memory**: Remember long strings of digits.
+- **Verbal Memory**: Distinguish between seen and new words.
+- **Aim Trainer**: Test your mouse speed and accuracy.
+- **Typing Test**: Calculate words per minute (WPM) and accuracy.
+- **Sequence Memory**: Memorize a flashing sequence of buttons.
 
-## Setup Instructions
+### 💎 Premium Experience
+- **Modern UI**: Sleek dark theme with `framer-motion` animations.
+- **Zero Friction**: Start playing immediately without logging in.
+- **Responsive**: Fully optimized for desktop and mobile play.
 
-### 1. Install Dependencies
+### 🔐 Advanced Architecture & Auth
+- **Hybrid Score Sync**: Scores are instantly saved to `localStorage` for offline/guest access. When you log in, your scores are **automatically synchronized to the Supabase Cloud Database**.
+- **Supabase Authentication**: Secure Email & Google OAuth integration.
+- **Row Level Security (RLS)**: Database policies ensure users can strictly own and manage their data.
 
-```bash
-npm install
-```
+## 🛠️ Tech Stack
 
-### 2. Set Up Supabase Database
+- **Frontend**: React + Vite
+- **Styling**: Modern Vanilla CSS Variables (Dark Theme)
+- **Icons**: Lucide React
+- **Animations**: Framer Motion
+- **Backend/DB**: Supabase (Auth + PostgreSQL)
 
-1. Go to your Supabase Dashboard: https://supabase.com/dashboard
-2. Navigate to **SQL Editor**
-3. Copy and paste the contents of `supabase-setup.sql` into the editor
-4. Click **Run** to execute the SQL script
+## 🚀 Getting Started
 
-This will create:
-- `profiles` table with proper schema
-- Row Level Security (RLS) policies
-- Indexes for performance
-- Triggers for automatic timestamp updates
+### Prerequisites
+- Node.js (Latest LTS)
+- A Supabase Project
 
-### 3. Configure Supabase Auth Settings
+### Installation
 
-In your Supabase Dashboard:
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/Yash1889/Logix.git
+    cd Logix
+    ```
 
-1. Go to **Authentication** → **URL Configuration**
-2. Add your site URL (for development: `http://localhost:5173`)
-3. Add redirect URLs if needed (for development: `http://localhost:5173/**`)
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
 
-**Note:** The Supabase credentials are already configured in `src/lib/supabase.js`. If you need to change them, update that file.
+3.  Configure Environment Variables:
+    Create a `.env` file and add your Supabase credentials:
+    ```env
+    VITE_SUPABASE_URL=your_project_url
+    VITE_SUPABASE_ANON_KEY=your_anon_key
+    ```
 
-### 4. Run the Development Server
+4.  **Database Setup (Important!)**:
+    Run the SQL scripts in your Supabase SQL Editor to set up the schema and RLS policies:
+    - Run `supabase-setup.sql` (Profiles & Triggers)
+    - Run `supabase-setup-scores.sql` (Game Scores & Policies)
 
-```bash
-npm run dev
-```
+5.  Start the development server:
+    ```bash
+    npm run dev
+    ```
 
-The app will be available at `http://localhost:5173`
+## 🛡️ Security
 
-## Project Structure
-
-```
-logix/
-├── src/
-│   ├── components/
-│   │   ├── Login.jsx          # Login page component
-│   │   ├── Signup.jsx         # Signup page component
-│   │   ├── Dashboard.jsx      # Dashboard page component
-│   │   ├── ProtectedRoute.jsx # Route protection wrapper
-│   │   ├── Auth.css           # Styles for auth pages
-│   │   └── Dashboard.css      # Styles for dashboard
-│   ├── contexts/
-│   │   └── AuthContext.jsx    # Authentication context & hooks
-│   ├── lib/
-│   │   └── supabase.js        # Supabase client configuration
-│   ├── App.jsx                # Main app component with routing
-│   ├── App.css                # Global styles
-│   └── main.jsx               # Entry point
-├── supabase-setup.sql         # SQL script for database setup
-├── package.json
-├── vite.config.js
-└── README.md
-```
-
-## Usage
-
-### Sign Up
-1. Navigate to `/signup`
-2. Enter email and password (minimum 6 characters)
-3. Confirm password
-4. Click "Sign Up"
-5. Profile will be automatically created in the `profiles` table
-
-### Login
-1. Navigate to `/login`
-2. Enter your email and password
-3. Click "Login"
-4. You'll be redirected to the dashboard
-
-### Dashboard
-The dashboard displays:
-- User email
-- Supabase UID
-- Login status
-- Profile creation date
-- Session details
-
-### Logout
-Click the "Logout" button in the dashboard header.
-
-## Security Features
-
-- **Row Level Security (RLS)**: Enabled on the `profiles` table
-- **Policies**: Users can only read/write their own profiles
-- **Public Anon Key**: Only the public anon key is used (no service_role key)
-- **Session Management**: Automatic session handling with persistence
-
-## Future Enhancements
-
-The architecture is designed to easily add:
-- Google OAuth authentication
-- Password reset functionality
-- Email verification
-- Additional profile fields
-- Multi-factor authentication
-
-## Troubleshooting
-
-### Profile not created after signup
-- Check Supabase logs in the Dashboard → Logs
-- Verify RLS policies are correctly set up
-- Ensure the `profiles` table exists and has the correct schema
-
-### Session not persisting
-- Check browser console for errors
-- Verify Supabase URL and keys are correct
-- Check Supabase Dashboard → Authentication → Settings
-
-### RLS errors
-- Ensure RLS is enabled on the `profiles` table
-- Verify policies are created correctly
-- Check that `auth.uid()` is available in your policies
-
-## Technologies Used
-
-- React 18
-- React Router DOM 6
-- Supabase JS Client 2
-- Vite 5
-- CSS3 (no external UI libraries)
-
+This project uses Supabase Row Level Security (RLS) to ensure data integrity.
+- **Profiles**: Users can only read/update their own profile.
+- **Scores**: Users can only insert scores linked to their own UUID and view their own history.
