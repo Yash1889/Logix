@@ -1,0 +1,24 @@
+.glass-card {
+    background-color: var(--bg-panel) !important;
+    /* Force solid */
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+    transition: all 0.2s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover State */
+.glass-card.hover-effect:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-primary);
+    box-shadow: 0 10px 30px -10px rgba(6, 182, 212, 0.3);
+}
+
+/* Remove fancy subtle borders if they cause blur issues */
+.glass-card::before {
+    display: none;
+}

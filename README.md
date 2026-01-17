@@ -1,75 +1,60 @@
-# Human Benchmark Platform
+# Human Benchmark V3 - Elite Cognitive System
 
-A premium, production-grade cognitive testing platform built with React and Supabase. This application allows users to test their reaction time, memory, and aiming skills, featuring a seamless hybrid score synchronization system.
+A professional-grade cognitive assessment platform capable of generating a "Cognitive Personality Map" through advanced psychological testing.
 
-## 🎮 Features
+![UI Preview](public/preview.png)
 
-### 🧠 Cognitive Tests
-Includes 7 fully implemented games:
-- **Reaction Time**: Measure your visual reflexes down to the millisecond.
-- **Visual Memory**: Memorize increasingly complex patterns of tiles.
-- **Number Memory**: Remember long strings of digits.
-- **Verbal Memory**: Distinguish between seen and new words.
-- **Aim Trainer**: Test your mouse speed and accuracy.
-- **Typing Test**: Calculate words per minute (WPM) and accuracy.
-- **Sequence Memory**: Memorize a flashing sequence of buttons.
+## 🚀 Key Features
 
-### 💎 Premium Experience
-- **Modern UI**: Sleek dark theme with `framer-motion` animations.
-- **Zero Friction**: Start playing immediately without logging in.
-- **Responsive**: Fully optimized for desktop and mobile play.
+### 🧠 Core Assessment Domains
+Includes 15+ Tests across 6 cognitive pillars:
+- **Executive Function**: Task Switching, Risk Decision, Tower Planning.
+- **Memory**: Visual, Number, Sequence, Verbal, Chimp Test.
+- **Reaction & Speed**: Reaction Time, Aim Trainer, Stroop Test, Typing.
+- **Intelligence**: Pattern Recognition, Logic, Mental Math.
+- **Attention**: Sustained Attention, Go/No-Go, N-Back.
+- **Social & EQ**: Theory of Mind, Emotion Recognition, Bias Benchmarks.
 
-### 🔐 Advanced Architecture & Auth
-- **Hybrid Score Sync**: Scores are instantly saved to `localStorage` for offline/guest access. When you log in, your scores are **automatically synchronized to the Supabase Cloud Database**.
-- **Supabase Authentication**: Secure Email & Google OAuth integration.
-- **Row Level Security (RLS)**: Database policies ensure users can strictly own and manage their data.
+### 💎 "Ops Center" Design System
+- **High-Visibility**: Deep Black background with Pure White typography.
+- **Neon Accents**: Cyan/Violet indicators for rapid signal processing.
+- **Wide-Screen Dashboard**: Full-width data visualization.
+
+### 🧬 The Profile Engine
+- **Cognitive Map**: A dynamic Radar Chart visualizes your strengths across Memory, Speed, Flexibility, Reasoning, and EQ.
+- **Archetype Generation**: The system analyzes your trait balance to assign a personality archetype (e.g., "Analytic Strategist").
+- **Hybrid Sync**: Scores save locally instantly, then sync to Supabase Cloud when online.
 
 ## 🛠️ Tech Stack
-
-- **Frontend**: React + Vite
-- **Styling**: Modern Vanilla CSS Variables (Dark Theme)
-- **Icons**: Lucide React
-- **Animations**: Framer Motion
-- **Backend/DB**: Supabase (Auth + PostgreSQL)
+- **Frontend**: React 18 + Vite
+- **Profiling**: Recharts (Radar/Spider Graphs)
+- **State**: React Hooks + Supabase Auth
+- **Style**: Variable-based High Contrast CSS System
 
 ## 🚀 Getting Started
 
-### Prerequisites
-- Node.js (Latest LTS)
-- A Supabase Project
-
-### Installation
-
-1.  Clone the repository:
-    ```bash
-    git clone https://github.com/Yash1889/Logix.git
-    cd Logix
-    ```
-
-2.  Install dependencies:
+1.  **Install dependencies**:
     ```bash
     npm install
     ```
 
-3.  Configure Environment Variables:
-    Create a `.env` file and add your Supabase credentials:
+2.  **Environment Setup**:
+    Create `.env` with:
     ```env
     VITE_SUPABASE_URL=your_project_url
     VITE_SUPABASE_ANON_KEY=your_anon_key
     ```
 
-4.  **Database Setup (Important!)**:
-    Run the SQL scripts in your Supabase SQL Editor to set up the schema and RLS policies:
-    - Run `supabase-setup.sql` (Profiles & Triggers)
-    - Run `supabase-setup-scores.sql` (Game Scores & Policies)
-
-5.  Start the development server:
+3.  **Run Development Server**:
     ```bash
     npm run dev
     ```
 
-## 🛡️ Security
+4.  **Distribution**:
+    Build for production:
+    ```bash
+    npm run build
+    ```
 
-This project uses Supabase Row Level Security (RLS) to ensure data integrity.
-- **Profiles**: Users can only read/update their own profile.
-- **Scores**: Users can only insert scores linked to their own UUID and view their own history.
+## 🛡️ License
+MIT

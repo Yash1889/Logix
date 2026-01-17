@@ -1,17 +1,13 @@
+/* App.css - Global Styles using Elite Theme */
+@import './theme.css';
+
 :root {
-  --bg-main: #121212;
-  --bg-card: #1e1e1e;
-  --bg-hover: #2a2a2a;
-  --border: #333333;
-
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-
-  --text-primary: #ffffff;
-  --text-secondary: #a1a1aa;
-
-  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+  /* Legacy mapping compatible with old components */
+  --primary: var(--accent-primary);
+  --bg-card: var(--bg-panel);
+  --border: var(--border-subtle);
+  --text-primary: var(--text-primary);
+  --text-secondary: var(--text-secondary);
 }
 
 * {
@@ -21,10 +17,19 @@
 }
 
 body {
-  background-color: var(--bg-main);
-  color: var(--text-primary);
-  font-family: var(--font-main);
-  min-height: 100vh;
+  /* Background handled in theme.css */
+  width: 100%;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 button {
@@ -38,6 +43,12 @@ a {
 
 #root {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-container {
+  flex: 1;
   display: flex;
   flex-direction: column;
 }

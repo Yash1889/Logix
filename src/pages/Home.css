@@ -1,89 +1,153 @@
 .home-container {
-    padding: 40px 20px;
-    max-width: 1200px;
-    margin: 0 auto;
+    width: 100%;
+    padding: 40px 60px;
+    /* More side padding but full width */
+    box-sizing: border-box;
 }
 
 .home-header {
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 60px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border-subtle);
 }
 
-.home-header h1 {
-    font-size: 3.5rem;
-    background: linear-gradient(to right, #3b82f6, #ec4899);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 16px;
+.hero-title {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #ffffff;
+    /* Explicit */
+    margin: 0;
+    letter-spacing: -1px;
 }
 
-.home-header p {
-    font-size: 1.2rem;
+.hero-subtitle {
     color: var(--text-secondary);
+    font-size: 1.2rem;
+    margin-top: 10px;
+    max-width: 800px;
 }
 
-.category-section {
-    margin-bottom: 60px;
+.version-badge {
+    background: var(--accent-primary);
+    color: #000;
+    font-weight: bold;
+    font-family: var(--font-mono);
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-left: 16px;
+    vertical-align: middle;
 }
 
+.category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+    /* Separation */
+}
+
+/* Category Header Left Aligned */
 .cat-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 24px;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.cat-icon-box {
+    width: 48px;
+    height: 48px;
+    background: var(--bg-panel);
+    border: 2px solid var(--border-subtle);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-primary) !important;
+    /* Force color */
 }
 
 .cat-header h2 {
-    font-size: 1.8rem;
-    color: var(--text-primary);
-    /* Or use category color */
+    font-size: 2rem;
+    color: #ffffff;
+    margin: 0;
 }
 
+.cat-desc {
+    color: var(--text-muted);
+    font-size: 1rem;
+    border-left: 2px solid var(--border-subtle);
+    padding-left: 16px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* GRID - 3 Columns Min */
 .games-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    /* Wider cards */
+    gap: 30px;
 }
 
-.game-card {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    text-decoration: none;
-    color: var(--text-primary);
-    transition: all 0.2s ease;
+.game-card-elite {
+    height: 160px;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+    background: var(--bg-panel) !important;
+    /* Solid background */
+    border: 1px solid var(--border-subtle);
 }
 
-.game-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--primary);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-}
-
-.game-icon {
-    margin-bottom: 16px;
-    padding: 12px;
-    background-color: rgba(255, 255, 255, 0.05);
+.game-icon-elite {
+    min-width: 60px;
+    height: 60px;
     border-radius: 12px;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-subtle);
 }
 
-.game-card h3 {
-    font-size: 1.25rem;
-    margin-bottom: 8px;
+.game-info h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.3rem;
+    color: #ffffff;
+    font-weight: 700;
 }
 
-.game-card p {
-    font-size: 0.9rem;
+.game-info p {
+    margin: 0;
+    font-size: 0.95rem;
     color: var(--text-secondary);
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 @media (max-width: 768px) {
-    .home-header h1 {
-        font-size: 2.5rem;
+    .home-container {
+        padding: 20px;
+    }
+
+    .home-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .cat-header {
+        flex-wrap: wrap;
+    }
+
+    .cat-desc {
+        border: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
     }
 }

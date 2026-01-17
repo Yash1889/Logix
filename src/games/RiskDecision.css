@@ -1,0 +1,84 @@
+.risk-container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.risk-intro {
+    background: var(--bg-panel);
+    padding: 60px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    border: 1px solid var(--border-subtle);
+}
+
+.balloon-area {
+    height: 400px;
+    /* Taller */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 30px 0;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    border: 1px dashed var(--border-subtle);
+}
+
+.balloon {
+    width: 100px;
+    /* Bigger start */
+    height: 130px;
+    background: radial-gradient(circle at 30% 30%, #f472b6, #db2777);
+    /* Pink 400/600 */
+    border-radius: 50% 50% 45% 45%;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(219, 39, 119, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.balloon::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 14px solid #db2777;
+}
+
+.explosion {
+    font-size: 8rem;
+    filter: drop-shadow(0 0 20px #ef4444);
+}
+
+.risk-controls {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+/* Ensure buttons are visible */
+.pump-btn {
+    min-width: 160px;
+}
+
+.risk-header {
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.risk-result h1 {
+    color: var(--success);
+    font-size: 4rem;
+    margin-bottom: 30px;
+    text-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+}

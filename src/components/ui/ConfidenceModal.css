@@ -1,0 +1,77 @@
+.conf-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.conf-modal {
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.conf-modal h2 {
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.conf-modal p {
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+}
+
+.conf-slider-container {
+    margin-bottom: 32px;
+}
+
+.conf-slider {
+    width: 100%;
+    height: 6px;
+    background: var(--bg-panel);
+    border-radius: 3px;
+    outline: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.conf-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+    box-shadow: 0 0 10px var(--accent-glow);
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.conf-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+.conf-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+    margin: 16px 0;
+    font-family: var(--font-mono);
+}
+
+.conf-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.conf-btn {
+    width: 100%;
+}

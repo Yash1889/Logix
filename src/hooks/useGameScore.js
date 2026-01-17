@@ -63,7 +63,24 @@ export function useGameScore(gameId) {
     // We can push local scores to DB on login? That's complex.
     // Let's at least validly SAVE to DB.
 
+    // Track session start time for fatigue analysis
+    useEffect(() => {
+        if (!sessionStorage.getItem('hb_session_start')) {
+            sessionStorage.setItem('hb_session_start', Date.now().toString());
+        }
+    }, []);
+
     const saveScore = async (score, lowerIsBetter = false, meta = {}) => {
+        // Calculate session duration (fatigue metric)
+        const sessionStart = Number(sessionStorage.getItem('hb_session_start'));
+        const timeSinceSessionStart = Date.now() - sessionStart;
+
+        const enhancedMeta = {
+            ...meta,
+            sessionDuration: timeSinceSessionStart, // ms since session began
+            timestamp: Date.now()
+        };
+
         // 1. Update Local State (Immediate Feedback)
         if (bestScore === null || (lowerIsBetter ? score < bestScore : score > bestScore)) {
             setBestScore(score);
@@ -82,7 +99,7 @@ export function useGameScore(gameId) {
                     user_id: user.id,
                     game_id: gameId,
                     score: score,
-                    meta: meta
+                    meta: enhancedMeta
                 });
             } catch (err) {
                 console.error("Failed to save score to DB", err);

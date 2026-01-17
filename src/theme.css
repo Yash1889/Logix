@@ -1,0 +1,47 @@
+:root {
+    /* EMERGENCY OP THEME - MAX VISIBILITY */
+    --bg-app: #030712;
+    /* Deep Black */
+    --bg-panel: #111827;
+    /* Dark Gray */
+    --bg-glass: #1f2937;
+    /* SOLID Gray 800 - No transparency for now */
+
+    /* Typography - PURE WHITE */
+    --text-primary: #ffffff !important;
+    --text-secondary: #e5e7eb !important;
+    /* Gray 200 */
+    --text-muted: #9ca3af !important;
+    /* Gray 400 */
+
+    /* Accents - NEON */
+    --accent-primary: #06b6d4;
+    /* Cyan */
+    --accent-glow: rgba(6, 182, 212, 0.4);
+
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #8b5cf6;
+
+    /* Borders */
+    --border-subtle: #374151;
+    /* Gray 700 - Visible border */
+    --border-highlight: #06b6d4;
+
+    /* Utilities */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --ease-spring: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+body {
+    background-color: var(--bg-app);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    margin: 0;
+    line-height: 1.5;
+    /* Remove faint gradients that might look muddy */
+    background-image: none;
+}

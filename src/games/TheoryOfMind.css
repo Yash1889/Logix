@@ -1,0 +1,25 @@
+.tom-container {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.tom-card {
+    background: var(--bg-card);
+    padding: 40px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+}
+
+.tom-text {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.tom-opts {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 30px;
+}
