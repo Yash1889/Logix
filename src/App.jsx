@@ -30,6 +30,7 @@ import LearningCurveTest from './games/LearningCurveTest'
 import BiasBenchmarks from './games/BiasBenchmarks'
 import TimeEstimation from './games/TimeEstimation'
 import TheoryOfMind from './games/TheoryOfMind'
+import PersonalityTest from './games/PersonalityTest'
 import './App.css'
 
 function App() {
@@ -77,6 +78,7 @@ function App() {
             <Route path="/test/learning-curve" element={<LearningCurveTest />} />
             <Route path="/test/bias-benchmarks" element={<BiasBenchmarks />} />
             <Route path="/test/time-estimation" element={<TimeEstimation />} />
+            <Route path="/test/personality" element={<PersonalityTest />} />
             <Route path="/test/theory-of-mind" element={<TheoryOfMind />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />

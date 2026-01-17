@@ -3,7 +3,7 @@ import {
     Zap, Brain, Eye, MousePointer, Activity,
     Clock, Hash, Type, Crosshair, Shuffle,
     ShieldAlert, Calculator, Sparkles, Gamepad2, Gift, Smile,
-    TrendingUp, Layers, Fingerprint
+    TrendingUp, Layers, Fingerprint, User
 } from 'lucide-react';
 import GlassCard from '../components/ui/GlassCard';
 import { motion } from 'framer-motion';
@@ -78,7 +78,8 @@ const CATEGORIES = [
         games: [
             { name: "Delay of Gratification", path: "/test/delay-gratification", icon: <Gift size={24} />, desc: "Time preference." },
             { name: "Emotion Recognition", path: "/test/emotion-recognition", icon: <Smile size={24} />, desc: "Facial micro-expressions." },
-            { name: "Theory of Mind", path: "/test/theory-of-mind", icon: <Brain size={24} />, desc: "Social prediction." }, // New
+            { name: "Theory of Mind", path: "/test/theory-of-mind", icon: <Brain />, desc: "Social intelligence." },
+            { name: "Personality Profiler", icon: <User />, path: "/test/personality", desc: "MBTI-style Cognitive Map." },
             { name: "Bias Benchmarks", path: "/test/bias-benchmarks", icon: <ShieldAlert size={24} />, desc: "Cognitive bias susceptibility." }, // New
             { name: "Time Estimation", path: "/test/time-estimation", icon: <Clock size={24} />, desc: "Internal clock & impulsivity." }, // New
         ]
