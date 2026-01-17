@@ -1,87 +1,67 @@
 import { useState, useRef, useEffect } from 'react';
 import GameWrapper from '../components/GameWrapper';
 import { useGameScore } from '../hooks/useGameScore';
+import { motion } from 'framer-motion';
 import './NumberMemory.css';
 
 export default function NumberMemory() {
     const { bestScore, sessionBest, saveScore } = useGameScore('number-memory');
-    const [gameState, setGameState] = useState('waiting'); // waiting, showing, answering, result
+    const [gameState, setGameState] = useState('waiting'); // waiting, showing, input, result
     const [level, setLevel] = useState(1);
     const [number, setNumber] = useState('');
-    const [userAnswer, setUserAnswer] = useState('');
-    const [timeLeft, setTimeLeft] = useState(0);
+    const [userInput, setUserInput] = useState('');
 
-    const startLevel = (lvl) => {
-        setGameState('showing');
-        setUserAnswer('');
-
-        // Generate number: lvl 1 = 1 digit, lvl 2 = 2 digits...
-        const digits = lvl;
-        let newNumber = '';
-        for (let i = 0; i < digits; i++) {
-            newNumber += Math.floor(Math.random() * 10);
+    const generateNumber = (length) => {
+        let num = '';
+        for (let i = 0; i < length; i++) {
+            num += Math.floor(Math.random() * 10);
         }
-        setNumber(newNumber);
-
-        // Show time depends on length? Usually fixed per digit in HB? 
-        // Actually HB logic is roughly: show for N seconds where N is related to length.
-        // Let's do 1 second + 0.5s per digit maybe?
-        const showTime = 1000 + (digits * 1000);
-        setTimeLeft(showTime);
+        return num;
     };
 
-    useEffect(() => {
-        let interval;
-        if (gameState === 'showing') {
-            const startTime = Date.now();
-            const endTime = startTime + timeLeft;
+    const startLevel = () => {
+        const length = level;
+        const newNum = generateNumber(length);
+        setNumber(newNum);
+        setGameState('showing');
+        setUserInput('');
 
-            interval = setInterval(() => {
-                const remaining = endTime - Date.now();
-                if (remaining <= 0) {
-                    setGameState('answering');
-                    clearInterval(interval);
-                } else {
-                    // Optional: update a progress bar using remaining state
-                }
-            }, 100);
+        // Time to show: 1s + (0.5s per digit) -> Roughly HB scaling
+        const showTime = 1000 + (length * 600);
 
-            // Cleanup backup
-            const timeout = setTimeout(() => {
-                setGameState('answering');
-                clearInterval(interval);
-            }, timeLeft);
-
-            return () => {
-                clearInterval(interval);
-                clearTimeout(timeout);
-            }
-        }
-    }, [gameState, timeLeft]);
+        setTimeout(() => {
+            setGameState('input');
+        }, showTime);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (userAnswer === number) {
+        if (userInput === number) {
             // Correct
-            const nextLevel = level + 1;
-            setLevel(nextLevel);
-            startLevel(nextLevel);
+            setLevel(prev => prev + 1);
+            setGameState('showing'); // Or 'correct' feedback state
+            setTimeout(startLevel, 500);
         } else {
             // Wrong
-            saveScore(level);
+            const meta = {
+                correctNumber: number,
+                userGuess: userInput,
+                digits: level
+            };
+            saveScore(level, false, meta); // Higher is better
             setGameState('result');
         }
     };
 
     const startGame = () => {
         setLevel(1);
-        startLevel(1);
+        startLevel();
     };
 
     return (
         <GameWrapper
             title="Number Memory"
-            description="Memorize the number shown, then type it back."
+            description="Memorize the number shown."
             onRestart={startGame}
             score={`Level ${level}`}
             bestScore={bestScore ? `Lvl ${bestScore}` : null}
@@ -89,48 +69,52 @@ export default function NumberMemory() {
         >
             <div className="number-memory-container">
                 {gameState === 'waiting' && (
-                    <div className="nm-start-screen">
-                        <button className="nm-btn primary" onClick={startGame}>Start Game</button>
-                    </div>
+                    <button className="nm-btn start" onClick={startGame}>Start</button>
                 )}
 
                 {gameState === 'showing' && (
                     <div className="nm-display">
-                        <h1 className="nm-number">{number}</h1>
-                        <div className="nm-timer-bar" style={{ animationDuration: `${timeLeft}ms` }}></div>
+                        <motion.h1
+                            initial={{ opacity: 0, scale: 0.5 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0 }}
+                        >
+                            {number}
+                        </motion.h1>
+                        <div className="nm-bar" style={{ animationDuration: `${1000 + (level * 600)}ms` }}></div>
                     </div>
                 )}
 
-                {gameState === 'answering' && (
-                    <form className="nm-form" onSubmit={handleSubmit}>
+                {gameState === 'input' && (
+                    <form onSubmit={handleSubmit} className="nm-form">
                         <h2>What was the number?</h2>
                         <input
-                            type="number"
-                            className="nm-input"
-                            value={userAnswer}
-                            onChange={(e) => setUserAnswer(e.target.value)}
+                            type="text"
+                            pattern="[0-9]*"
+                            value={userInput}
+                            onChange={(e) => setUserInput(e.target.value)}
                             autoFocus
-                            placeholder="Type range..."
+                            className="nm-input"
                         />
-                        <button type="submit" className="nm-btn primary">Submit</button>
+                        <button type="submit" className="nm-btn">Submit</button>
                     </form>
                 )}
 
                 {gameState === 'result' && (
                     <div className="nm-result">
-                        <h2>Game Over</h2>
+                        <h1>Game Over</h1>
+                        <p>Level Reached: {level}</p>
                         <div className="nm-comparison">
-                            <div className="nm-val">
-                                <span>Number</span>
-                                <p>{number}</p>
+                            <div>
+                                <span>Number:</span>
+                                <p className="correct">{number}</p>
                             </div>
-                            <div className="nm-val wrong">
-                                <span>Your Answer</span>
-                                <p>{userAnswer}</p>
+                            <div>
+                                <span>Your Answer:</span>
+                                <p className="wrong">{userInput}</p>
                             </div>
                         </div>
-                        <h1>Level {level}</h1>
-                        <button className="nm-btn primary" onClick={startGame}>Try Again</button>
+                        <button className="nm-btn" onClick={startGame}>Try Again</button>
                     </div>
                 )}
             </div>

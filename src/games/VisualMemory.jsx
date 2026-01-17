@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import GameWrapper from '../components/GameWrapper';
 import { useGameScore } from '../hooks/useGameScore';
 import { motion } from 'framer-motion';
@@ -8,137 +8,155 @@ export default function VisualMemory() {
     const { bestScore, sessionBest, saveScore } = useGameScore('visual-memory');
     const [gameState, setGameState] = useState('waiting'); // waiting, showing, playing, result
     const [level, setLevel] = useState(1);
+    const [gridSize, setGridSize] = useState(3);
     const [pattern, setPattern] = useState([]);
     const [userPattern, setUserPattern] = useState([]);
-    const [gridSize, setGridSize] = useState(3); // 3x3 start
-
-    // Stats
     const [lives, setLives] = useState(3);
+    const [clickCount, setClickCount] = useState(0); // Track clicks for accuracy
 
-    const generatePattern = (lvl, size) => {
-        const numTiles = Math.max(3, lvl + 2);
-        const newPattern = [];
+    // Generate Pattern based on level
+    const generatePattern = (lvl) => {
+        // Determine grid size and pattern length
+        // Level 1: 3 tiles, 3x3
+        // Level 2: 4 tiles, 3x3
+        // Level 3: 5 tiles, 4x4 ...
+
+        // Simple scaling:
+        // Tiles = level + 2
+        // Grid Size grows every 3 levels?
+
+        const tileCount = level + 2;
+        const size = level > 12 ? 6 : level > 6 ? 5 : level > 2 ? 4 : 3;
+        setGridSize(size);
+
         const totalTiles = size * size;
-
-        while (newPattern.length < numTiles) {
-            const rand = Math.floor(Math.random() * totalTiles);
-            if (!newPattern.includes(rand)) {
-                newPattern.push(rand);
-            }
+        const newPattern = new Set();
+        while (newPattern.size < tileCount) {
+            newPattern.add(Math.floor(Math.random() * totalTiles));
         }
-        return newPattern;
+        return Array.from(newPattern);
     };
 
-    const startGame = () => {
-        setLives(3);
-        setLevel(1);
-        setGridSize(3);
-        startLevel(1, 3);
-    };
-
-    const startLevel = (currentLevel, currentSize) => {
+    const startLevel = () => {
         setGameState('showing');
         setUserPattern([]);
-        const newPattern = generatePattern(currentLevel, currentSize);
-        setPattern(newPattern);
 
-        // Show pattern for 1 second then hide
         setTimeout(() => {
-            setGameState('playing');
-        }, 1000 + (newPattern.length * 50)); // Scaling time based on complexity
+            const newPattern = generatePattern(level);
+            setPattern(newPattern);
+
+            // Show for 1.5s
+            setTimeout(() => {
+                setGameState('playing');
+            }, 1500);
+        }, 500);
     };
 
     const handleTileClick = (index) => {
         if (gameState !== 'playing') return;
+        if (userPattern.includes(index)) return; // Already clicked
 
-        // Check if clicked tile is in pattern
-        if (!pattern.includes(index)) {
-            // Wrong click
+        // Check if correct
+        if (pattern.includes(index)) {
+            const newUserPattern = [...userPattern, index];
+            setUserPattern(newUserPattern);
+            setClickCount(prev => prev + 1);
+
+            if (newUserPattern.length === pattern.length) {
+                // Level Complete
+                setLevel(prev => prev + 1);
+                setGameState('showing'); // Transition
+                setTimeout(startLevel, 1000);
+            }
+        } else {
+            // Wrong tile
             const newLives = lives - 1;
             setLives(newLives);
-            // Flash red or shake?
+
+            // Temporarily show error and correct tiles? 
+            // For now just standard "strike" behavior.
+
+            // Highlight wrong tile briefly? CSS handles "wrong" class if we managed state per tile?
+            // Simpler: Just standard HB behavior (game over on 3 strikes or retry level?)
+            // HB Logic: You lose a life, but you must complete the PATTERN to move on? 
+            // OR level restarts with same difficulty?
+            // Actually HB Visual Memory: 3 Strikes and GAME OVER.
 
             if (newLives <= 0) {
-                setGameState('result');
-                saveScore(level);
+                endGame();
             } else {
-                // Retry level with same pattern (or new? usually new in HB)
-                // HB usually keeps same level but new pattern on fail, 3 strikes
-                setGameState('showing');
-                setUserPattern([]);
-                setTimeout(() => {
-                    setGameState('playing');
-                }, 1000);
+                // Continue playing? OR reset level? 
+                // HB: Just mark it wrong, life lost. Game continues.
+                // But we need visual feedback. 
+                // We'll shake the board.
+                const grid = document.querySelector('.vm-grid');
+                if (grid) grid.classList.add('shake');
+                setTimeout(() => grid?.classList.remove('shake'), 500);
             }
-            return;
         }
+    };
 
-        // Correct click
-        // Check if already clicked
-        if (userPattern.includes(index)) return;
+    const endGame = () => {
+        const finalScore = level;
 
-        const newUserPattern = [...userPattern, index];
-        setUserPattern(newUserPattern);
+        // Meta: Lives remaining? 
+        const meta = {
+            levelDetails: { finalLevel: level, size: gridSize }
+        };
 
-        if (newUserPattern.length === pattern.length) {
-            // Level Complete
-            const nextLevel = level + 1;
-            setLevel(nextLevel);
-            if (nextLevel % 3 === 0) {
-                setGridSize(prev => Math.min(prev + 1, 6)); // Cap at 6x6
-            }
-            setTimeout(() => {
-                startLevel(nextLevel, nextLevel % 3 === 0 ? gridSize + 1 : gridSize);
-            }, 500);
-        }
+        saveScore(finalScore, false, meta); // Higher is better
+        setGameState('result');
+    };
+
+    const startGame = () => {
+        setLevel(1);
+        setLives(3);
+        startLevel();
     };
 
     return (
         <GameWrapper
             title="Visual Memory"
-            description="Memorize the pattern of white squares."
+            description="Memorize the pattern of tiles."
             onRestart={startGame}
-            score={`Level ${level}`}
+            score={`Level ${level} | Lives ${lives}`}
             bestScore={bestScore ? `Lvl ${bestScore}` : null}
             sessionBest={sessionBest ? `Lvl ${sessionBest}` : null}
         >
-            <div className="visual-memory-container">
+            <div className="vm-container">
                 {gameState === 'waiting' || gameState === 'result' ? (
-                    <div className="vm-start-screen">
-                        {gameState === 'result' && <h1>Game Over | Level {level}</h1>}
-                        <button className="vm-start-btn" onClick={startGame}>
+                    <div className="vm-start">
+                        {gameState === 'result' && <h1>Level {level}</h1>}
+                        <button className="vm-btn" onClick={startGame}>
                             {gameState === 'waiting' ? 'Start Game' : 'Try Again'}
                         </button>
                     </div>
                 ) : (
-                    <>
-                        <div className="vm-stats">
-                            Lives: {'❤️'.repeat(lives)}
-                        </div>
-                        <div
-                            className="vm-grid"
-                            style={{
-                                gridTemplateColumns: `repeat(${gridSize}, 1fr)`
-                            }}
-                        >
-                            {Array.from({ length: gridSize * gridSize }).map((_, i) => {
-                                const isActive = gameState === 'showing' && pattern.includes(i);
-                                const isSelected = userPattern.includes(i);
-                                const isMissed = gameState === 'playing' && !pattern.includes(i) && userPattern.includes(i); // Logic handled above, instant fail check
+                    <div
+                        className="vm-grid"
+                        style={{
+                            gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
+                            width: `${gridSize * 70}px`
+                        }}
+                    >
+                        {Array.from({ length: gridSize * gridSize }).map((_, i) => {
+                            const isPatternForShow = gameState === 'showing' && pattern.includes(i);
+                            const isSelected = userPattern.includes(i);
+                            // We don't easily track specific tile errors in this simple state, 
+                            // but we could if we expanded userPattern to hold objects.
 
-                                return (
-                                    <motion.div
-                                        key={i}
-                                        className={`vm-tile ${isActive ? 'active' : ''} ${isSelected ? 'selected' : ''}`}
-                                        onClick={() => handleTileClick(i)}
-                                        initial={{ scale: 0.9 }}
-                                        animate={{ scale: isActive || isSelected ? 1 : 0.95 }}
-                                        whileHover={{ scale: 0.98 }}
-                                    />
-                                );
-                            })}
-                        </div>
-                    </>
+                            return (
+                                <motion.div
+                                    key={i}
+                                    className={`vm-tile ${isPatternForShow ? 'active' : ''} ${isSelected ? 'selected' : ''}`}
+                                    onClick={() => handleTileClick(i)}
+                                    initial={{ scale: 0.8, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                />
+                            );
+                        })}
+                    </div>
                 )}
             </div>
         </GameWrapper>

@@ -1,0 +1,74 @@
+.chimp-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.chimp-start,
+.chimp-result {
+    text-align: center;
+    padding: 40px;
+}
+
+.chimp-btn {
+    padding: 16px 32px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    background-color: var(--primary);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 24px;
+}
+
+.chimp-game {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.chimp-stats {
+    font-size: 1.5rem;
+    margin-bottom: 24px;
+}
+
+.chimp-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 8px;
+    width: 100%;
+}
+
+.chimp-cell {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    user-select: none;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.chimp-cell.visible {
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.chimp-cell.hidden {
+    background-color: white;
+    border: 2px solid white;
+}
+
+.chimp-cell.empty {
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    .chimp-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}

@@ -1,0 +1,44 @@
+.logic-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.logic-btn.start {
+    padding: 16px 32px;
+    font-size: 1.5rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.logic-play h2 {
+    font-size: 2rem;
+    margin-bottom: 40px;
+}
+
+.logic-opts {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.logic-opt {
+    padding: 20px;
+    font-size: 1.2rem;
+    background-color: var(--bg-card);
+    border: 2px solid var(--border);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+}
+
+.logic-opt:hover {
+    border-color: var(--primary);
+    background-color: rgba(255, 255, 255, 0.05);
+}

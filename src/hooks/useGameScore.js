@@ -63,7 +63,7 @@ export function useGameScore(gameId) {
     // We can push local scores to DB on login? That's complex.
     // Let's at least validly SAVE to DB.
 
-    const saveScore = async (score, lowerIsBetter = false) => {
+    const saveScore = async (score, lowerIsBetter = false, meta = {}) => {
         // 1. Update Local State (Immediate Feedback)
         if (bestScore === null || (lowerIsBetter ? score < bestScore : score > bestScore)) {
             setBestScore(score);
@@ -81,7 +81,8 @@ export function useGameScore(gameId) {
                 await supabase.from('game_scores').insert({
                     user_id: user.id,
                     game_id: gameId,
-                    score: score
+                    score: score,
+                    meta: meta
                 });
             } catch (err) {
                 console.error("Failed to save score to DB", err);

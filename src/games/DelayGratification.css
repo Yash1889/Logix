@@ -1,0 +1,76 @@
+.delay-container {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.delay-icon {
+    color: var(--primary);
+    margin-bottom: 24px;
+}
+
+.delay-btn {
+    padding: 16px 32px;
+    font-size: 1.5rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 24px;
+}
+
+.delay-options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.delay-opt {
+    padding: 30px;
+    border: 2px solid var(--border);
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: white;
+    width: 250px;
+    transition: all 0.2s;
+}
+
+.delay-opt:hover {
+    border-color: var(--primary);
+    transform: translateY(-5px);
+}
+
+.delay-opt strong {
+    font-size: 2rem;
+    color: var(--primary);
+}
+
+.delay-opt.small strong {
+    color: var(--text-secondary);
+}
+
+.delay-waiting .spin {
+    animation: spin 2s linear infinite;
+    margin-bottom: 20px;
+    color: var(--primary);
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 600px) {
+    .delay-options {
+        flex-direction: column;
+    }
+}

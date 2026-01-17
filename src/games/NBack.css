@@ -1,0 +1,51 @@
+.nback-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.nb-btn {
+    padding: 12px 24px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+.nb-btn.primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.nb-letter {
+    font-size: 6rem;
+    font-weight: 700;
+    margin: 40px 0;
+    height: 120px;
+}
+
+.nb-match-btn {
+    width: 200px;
+    height: 80px;
+    font-size: 1.5rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.nb-match-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--text-secondary);
+}
+
+.nb-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}

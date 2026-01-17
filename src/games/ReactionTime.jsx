@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import GameWrapper from '../components/GameWrapper';
 import { useGameScore } from '../hooks/useGameScore';
-import { Zap } from 'lucide-react';
+import { Zap, AlertTriangle } from 'lucide-react';
 import './ReactionTime.css';
 
 export default function ReactionTime() {
@@ -9,6 +9,9 @@ export default function ReactionTime() {
     const [gameState, setGameState] = useState('waiting'); // waiting, ready, now, result, early
     const [startTime, setStartTime] = useState(0);
     const [score, setScore] = useState(null);
+    const [attempts, setAttempts] = useState([]); // Store last 5 attempts for average
+    const [falseStarts, setFalseStarts] = useState(0);
+
     const timerRef = useRef(null);
 
     const startGame = () => {
@@ -28,11 +31,28 @@ export default function ReactionTime() {
         } else if (gameState === 'ready') {
             clearTimeout(timerRef.current);
             setGameState('early');
+            setFalseStarts(prev => prev + 1);
         } else if (gameState === 'now') {
             const endTime = Date.now();
             const reactionTime = endTime - startTime;
+
+            // Update score history
+            const newAttempts = [...attempts, reactionTime].slice(-5); // Keep last 5
+            setAttempts(newAttempts);
             setScore(reactionTime);
-            saveScore(reactionTime, true); // true = lower is better
+
+            // Calculate average of last 5 or just save this one? 
+            // HB usually saves the average of 5. For V2, let's just save every valid attempt 
+            // but maybe suggest the user do 5? 
+            // Let's stick to saving singular best for now, but log meta.
+
+            const meta = {
+                falseStarts: falseStarts,
+                recentAverage: newAttempts.reduce((a, b) => a + b, 0) / newAttempts.length,
+                attemptsCount: newAttempts.length
+            };
+
+            saveScore(reactionTime, true, meta); // true = lower is better
             setGameState('result');
         } else if (gameState === 'result' || gameState === 'early') {
             startGame();
@@ -43,6 +63,8 @@ export default function ReactionTime() {
         clearTimeout(timerRef.current);
         setGameState('waiting');
         setScore(null);
+        setAttempts([]);
+        setFalseStarts(0);
     };
 
     useEffect(() => {
@@ -88,11 +110,18 @@ export default function ReactionTime() {
                             <Zap size={80} className="reaction-icon" />
                             <h1>{score} ms</h1>
                             <p>Click to try again</p>
+                            {falseStarts > 0 && (
+                                <div className="reaction-meta-warning">
+                                    <AlertTriangle size={16} />
+                                    <span>{falseStarts} false start{falseStarts !== 1 ? 's' : ''} recorded</span>
+                                </div>
+                            )}
                         </>
                     )}
 
                     {gameState === 'early' && (
                         <>
+                            <AlertTriangle size={80} className="reaction-icon" />
                             <h2>Too soon!</h2>
                             <p>Click to try again</p>
                         </>

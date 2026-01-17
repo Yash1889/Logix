@@ -1,7 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import GameWrapper from '../components/GameWrapper';
 import { useGameScore } from '../hooks/useGameScore';
-import { motion } from 'framer-motion';
 import './SequenceMemory.css';
 
 export default function SequenceMemory() {
@@ -52,9 +51,6 @@ export default function SequenceMemory() {
     };
 
     const highlightTile = (index) => {
-        // We can use a ref or data attribute, but here we can modify a temporary state or use class manipulation via DOM for perf?
-        // React state is fine for this speed.
-        // Actually, let's use a "flash" state
         const el = document.getElementById(`tile-${index}`);
         if (el) {
             el.classList.add('flash');
@@ -83,7 +79,10 @@ export default function SequenceMemory() {
             }
         } else {
             // Fail
-            saveScore(level);
+            const meta = {
+                maxSequence: level
+            };
+            saveScore(level, false, meta);
             setGameState('result');
         }
     };

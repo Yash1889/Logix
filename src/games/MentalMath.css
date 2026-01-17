@@ -1,0 +1,49 @@
+.math-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.math-icon {
+    color: var(--primary);
+    margin-bottom: 20px;
+}
+
+.math-btn {
+    padding: 12px 32px;
+    font-size: 1.5rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 24px;
+}
+
+.math-question {
+    font-size: 5rem;
+    font-weight: 900;
+    margin: 40px 0;
+}
+
+.math-input {
+    font-size: 3rem;
+    text-align: center;
+    padding: 10px;
+    width: 200px;
+    border: 2px solid var(--border);
+    background: transparent;
+    color: white;
+    border-radius: 12px;
+}
+
+.math-input:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+.math-timer {
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+}

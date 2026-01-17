@@ -1,0 +1,57 @@
+.pattern-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.pattern-btn.start {
+    padding: 16px 32px;
+    font-size: 1.5rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.pattern-seq {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 40px 0;
+    font-size: 2.5rem;
+}
+
+.pattern-num {
+    padding: 10px 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.pattern-num.missing {
+    background-color: var(--primary);
+    color: white;
+}
+
+.pattern-opts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.pattern-opt {
+    padding: 20px;
+    font-size: 1.5rem;
+    background-color: var(--bg-card);
+    border: 2px solid var(--border);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pattern-opt:hover {
+    border-color: var(--primary);
+    background-color: rgba(255, 255, 255, 0.05);
+}

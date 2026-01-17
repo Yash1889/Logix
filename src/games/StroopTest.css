@@ -1,0 +1,66 @@
+.stroop-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 500px;
+}
+
+.stroop-start,
+.stroop-result,
+.stroop-play {
+    text-align: center;
+    width: 100%;
+}
+
+.stroop-icon {
+    color: var(--primary);
+    margin-bottom: 24px;
+}
+
+.stroop-word {
+    font-size: 5rem;
+    font-weight: 900;
+    margin: 48px 0;
+    text-transform: uppercase;
+}
+
+.stroop-options {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+.stroop-option-btn {
+    padding: 16px 32px;
+    background-color: var(--bg-card);
+    border: 2px solid var(--border);
+    color: var(--text-primary);
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.stroop-option-btn:hover {
+    border-color: var(--primary);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.stroop-btn.start {
+    padding: 12px 32px;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-top: 24px;
+}
+
+.stroop-counter {
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+}
