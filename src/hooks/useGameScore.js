@@ -95,16 +95,21 @@ export function useGameScore(gameId) {
         // 2. Persist to DB if logged in
         if (user) {
             try {
-                await supabase.from('game_scores').insert({
+                const { error } = await supabase.from('game_scores').insert({
                     user_id: user.id,
                     game_id: gameId,
                     score: score,
                     meta: enhancedMeta
                 });
+
+                if (error) throw error;
+                return { success: true };
             } catch (err) {
                 console.error("Failed to save score to DB", err);
+                return { success: false, error: err };
             }
         }
+        return { success: true }; // Local only
     };
 
     return {

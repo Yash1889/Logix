@@ -68,7 +68,7 @@ export default function Dashboard() {
               <div style={{ maxWidth: '600px', color: 'var(--text-secondary)', fontSize: '1.1rem' }}>
                 {scores.find(s => s.game_id === 'personality-test').meta?.description}
               </div>
-              <GlassButton onClick={() => window.location.href = '/test/personality'} size="small" variant="outline">
+              <GlassButton onClick={() => window.location.href = '/personality-profile'} size="small" variant="outline">
                 View Full Analysis
               </GlassButton>
             </div>

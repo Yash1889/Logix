@@ -31,6 +31,7 @@ import BiasBenchmarks from './games/BiasBenchmarks'
 import TimeEstimation from './games/TimeEstimation'
 import TheoryOfMind from './games/TheoryOfMind'
 import PersonalityTest from './games/PersonalityTest'
+import PersonalityProfile from './pages/PersonalityProfile'
 import './App.css'
 
 function App() {
@@ -79,6 +80,7 @@ function App() {
             <Route path="/test/bias-benchmarks" element={<BiasBenchmarks />} />
             <Route path="/test/time-estimation" element={<TimeEstimation />} />
             <Route path="/test/personality" element={<PersonalityTest />} />
+            <Route path="/personality-profile" element={<PersonalityProfile />} />
             <Route path="/test/theory-of-mind" element={<TheoryOfMind />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
