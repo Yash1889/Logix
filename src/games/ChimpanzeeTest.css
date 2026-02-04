@@ -1,36 +1,54 @@
 .chimp-container {
     width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.chimp-start,
-.chimp-result {
-    text-align: center;
-    padding: 40px;
-}
-
-.chimp-btn {
-    padding: 16px 32px;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: white;
-    background-color: var(--primary);
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 24px;
-}
-
-.chimp-game {
+    max-width: 900px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    min-height: 500px;
 }
 
-.chimp-stats {
-    font-size: 1.5rem;
+.chimp-overlay,
+.chimp-result-panel {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+}
+
+.chimp-icon {
+    color: var(--accent-primary);
     margin-bottom: 24px;
+    opacity: 0.9;
+}
+
+.chimp-btn-start,
+.chimp-retry-btn {
+    margin-top: 32px;
+    background: var(--bg-depth-2);
+    border: 1px solid var(--accent-primary);
+    color: var(--accent-primary);
+    padding: 12px 32px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.chimp-btn-start:hover,
+.chimp-retry-btn:hover {
+    background: var(--accent-dim);
+}
+
+/* PLAY AREA */
+.chimp-game-area {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .chimp-grid {
@@ -38,37 +56,96 @@
     grid-template-columns: repeat(10, 1fr);
     gap: 8px;
     width: 100%;
+    max-width: 800px;
+    aspect-ratio: 10/8;
+    background: var(--bg-depth-1);
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
 }
 
-.chimp-cell {
-    aspect-ratio: 1;
-    border-radius: 4px;
+.chimp-slot {
+    width: 100%;
+    height: 100%;
+    /* Empty slot placeholder */
+}
+
+.chimp-tile {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: white;
-    user-select: none;
     cursor: pointer;
-    background-color: transparent;
+    background: var(--bg-depth-3);
+    border: 1px solid var(--border-subtle);
+    position: relative;
+    user-select: none;
 }
 
-.chimp-cell.visible {
-    border: 2px solid rgba(255, 255, 255, 0.2);
+.chimp-tile:hover {
+    border-color: var(--accent-primary);
 }
 
-.chimp-cell.hidden {
-    background-color: white;
-    border: 2px solid white;
+.chimp-tile.hidden-mode .tile-val {
+    opacity: 0;
 }
 
-.chimp-cell.empty {
-    pointer-events: none;
+.chimp-tile.hidden-mode .tile-cover {
+    display: block;
+}
+
+.tile-val {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    z-index: 2;
+}
+
+.tile-cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--text-primary);
+    /* White cover */
+    border-radius: var(--radius-sm);
+    z-index: 1;
+}
+
+/* RESULT */
+.chimp-stats-grid {
+    display: flex;
+    gap: 48px;
+    margin-top: 32px;
+}
+
+.chimp-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.chimp-stat .label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.1em;
+}
+
+.chimp-stat .value {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--text-primary);
 }
 
 @media (max-width: 768px) {
     .chimp-grid {
         grid-template-columns: repeat(6, 1fr);
+        aspect-ratio: 0.8;
     }
 }

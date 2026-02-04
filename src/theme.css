@@ -1,47 +1,151 @@
 :root {
-    /* EMERGENCY OP THEME - MAX VISIBILITY */
-    --bg-app: #030712;
-    /* Deep Black */
-    --bg-panel: #111827;
-    /* Dark Gray */
-    --bg-glass: #1f2937;
-    /* SOLID Gray 800 - No transparency for now */
+    /* 
+     * COGNITIVE OS THEME SYSTEM v2.0
+     * Protocol: Adaptive (Light/Dark)
+     * Mood: Analytical, Precise, High-Contrast
+     */
 
-    /* Typography - PURE WHITE */
-    --text-primary: #ffffff !important;
-    --text-secondary: #e5e7eb !important;
-    /* Gray 200 */
-    --text-muted: #9ca3af !important;
-    /* Gray 400 */
+    /* --- PALETTE DEFINITIONS (RAW) --- */
 
-    /* Accents - NEON */
-    --accent-primary: #06b6d4;
-    /* Cyan */
-    --accent-glow: rgba(6, 182, 212, 0.4);
+    /* DARK MODE PALETTE (Obsidian - High Vis) */
+    --obsidian-0: #0f172a;
+    /* Slate 950 - Richer, bluer dark */
+    --obsidian-1: #1e293b;
+    /* Slate 800 - Much lighter panel */
+    --obsidian-2: #334155;
+    /* Slate 700 - Explicit card surface */
+    --obsidian-3: #475569;
+    /* Slate 600 - Hover/Elevated */
+    --obsidian-4: #64748b;
+    /* Slate 500 */
 
-    --success: #10b981;
-    --warning: #f59e0b;
-    --danger: #ef4444;
-    --info: #8b5cf6;
+    /* LIGHT MODE PALETTE (Ceramic) */
+    --ceramic-0: #ffffff;
+    --ceramic-1: #f8fafc;
+    /* Slate 50 */
+    --ceramic-2: #e2e8f0;
+    /* Slate 200 */
+    --ceramic-3: #cbd5e1;
+    /* Slate 300 */
+    --ceramic-4: #94a3b8;
+    /* Slate 400 */
 
-    /* Borders */
-    --border-subtle: #374151;
-    /* Gray 700 - Visible border */
-    --border-highlight: #06b6d4;
+    /* ACCENTS */
+    --cyan-500: #06b6d4;
+    --cyan-600: #0891b2;
+    --cyan-700: #0e7490;
+    --cyan-100: #cffafe;
 
-    /* Utilities */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-    --font-sans: 'Inter', system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
-    --ease-spring: cubic-bezier(0.25, 0.8, 0.25, 1);
+    /* FUNCTIONAL */
+    --red-500: #ef4444;
+    --green-500: #10b981;
+    --amber-500: #f59e0b;
+
+    /* --- SEMANTIC VARIABLES (DEFAULT = DARK) --- */
+
+    /* BACKGROUNDS */
+    --bg-depth-0: var(--obsidian-0);
+    --bg-depth-1: var(--obsidian-1);
+    --bg-depth-2: var(--obsidian-2);
+    --bg-depth-3: var(--obsidian-3);
+
+    /* TEXT */
+    --text-primary: #f1f5f9;
+    /* Slate 100 - Bright White */
+    --text-secondary: #cbd5e1;
+    /* Slate 300 - High readable gray */
+    --text-tertiary: #94a3b8;
+    /* Slate 400 - Muted */
+    --text-inverse: #0f172a;
+    /* Text on bright accents */
+
+    /* ACCENTS */
+    --accent-primary: var(--cyan-500);
+    --accent-hover: var(--cyan-600);
+    --accent-dim: rgba(6, 182, 212, 0.15);
+    --accent-text: #67e8f9;
+    /* Cyan 300 for text readability */
+
+    /* BORDERS */
+    --border-subtle: #334155;
+    /* Lighter border for defining edges */
+    --border-strong: #475569;
+
+    /* STATUS */
+    --status-success: var(--green-500);
+    --status-warning: var(--amber-500);
+    --status-error: var(--red-500);
+
+    /* COMMON */
+    --font-sans: 'IBM Plex Sans', -apple-system, system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'JetBrains Mono', monospace;
+    --radius-sm: 2px;
+    --radius-md: 4px;
+    --ease-precision: cubic-bezier(0.2, 0.0, 0.0, 1.0);
 }
 
+/* --- LIGHT MODE OVERRIDES --- */
+[data-theme="light"] {
+    /* BACKGROUNDS */
+    --bg-depth-0: var(--ceramic-1);
+    /* Slight gray tint for app bg to reduce glare */
+    --bg-depth-1: var(--ceramic-0);
+    /* White panels */
+    --bg-depth-2: var(--ceramic-0);
+    /* White cards */
+    --bg-depth-3: var(--ceramic-2);
+    /* Hover states */
+
+    /* TEXT - High Contrast Slate */
+    --text-primary: #09090b;
+    /* Zinc 950 - Almost black */
+    --text-secondary: #52525b;
+    /* Zinc 600 */
+    --text-tertiary: #71717a;
+    /* Zinc 500 */
+    --text-inverse: #ffffff;
+
+    /* ACCENTS */
+    --accent-primary: #0891b2;
+    /* Cyan 600 - Darker for visibility on white */
+    --accent-hover: #0e7490;
+    /* Cyan 700 */
+    --accent-dim: var(--cyan-100);
+    --accent-text: #0e7490;
+    /* Cyan 700 for text */
+
+    /* BORDERS */
+    --border-subtle: #e4e4e7;
+    /* Zinc 200 */
+    --border-strong: #d4d4d8;
+    /* Zinc 300 */
+}
+
+/* GLOBAL SETTINGS */
 body {
-    background-color: var(--bg-app);
+    background-color: var(--bg-depth-0);
     color: var(--text-primary);
     font-family: var(--font-sans);
     margin: 0;
-    line-height: 1.5;
-    /* Remove faint gradients that might look muddy */
-    background-image: none;
+    line-height: 1.6;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    background: var(--bg-depth-0);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bg-depth-3);
+    border-radius: 4px;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+    background: var(--ceramic-3);
+}
+
+::selection {
+    background: var(--accent-primary);
+    color: var(--text-inverse);
 }

@@ -1,53 +1,99 @@
-.sequence-memory-container {
+.sm-container {
     width: 100%;
-    height: 500px;
+    max-width: 600px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    min-height: 500px;
+    position: relative;
+}
+
+.sm-overlay,
+.sm-result-panel {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+}
+
+.sm-result-panel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(15, 23, 42, 0.9);
+    padding: 32px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    width: 300px;
+}
+
+.sm-play-area.blur {
+    opacity: 0.3;
+    pointer-events: none;
+    filter: blur(4px);
+}
+
+.sm-icon {
+    color: var(--accent-primary);
+    margin-bottom: 24px;
+    opacity: 0.9;
+}
+
+.sm-btn-start,
+.sm-retry-btn {
+    margin-top: 32px;
+    background: var(--bg-depth-2);
+    border: 1px solid var(--accent-primary);
+    color: var(--accent-primary);
+    padding: 12px 32px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.sm-btn-start:hover,
+.sm-retry-btn:hover {
+    background: var(--accent-dim);
 }
 
 .sm-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
-    width: 300px;
-    height: 300px;
+    width: 100%;
+    max-width: 350px;
+    aspect-ratio: 1;
+    background: var(--bg-depth-2);
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
 }
 
 .sm-tile {
-    background-color: #2a2a2a;
-    border-radius: 8px;
+    background-color: var(--bg-depth-3);
+    border-radius: var(--radius-sm);
     cursor: pointer;
     transition: background-color 0.1s, transform 0.1s;
+    border: 1px solid transparent;
+}
+
+.sm-tile:hover {
+    background-color: var(--bg-depth-4);
 }
 
 .sm-tile:active {
-    background-color: white;
+    background-color: var(--text-primary);
+    transform: scale(0.95);
 }
 
-.sm-tile.flash {
-    background-color: white;
-}
-
-.sm-start-screen {
-    text-align: center;
-}
-
-.sm-btn {
-    padding: 16px 32px;
-    font-size: 1.5rem;
-    border-radius: 12px;
-    cursor: pointer;
-    border: none;
-    font-weight: 700;
-    transition: all 0.2s;
-}
-
-.sm-btn.primary {
-    background-color: var(--primary);
-    color: white;
-}
-
-.sm-btn.primary:hover {
-    background-color: var(--primary-hover);
+.sm-tile.active {
+    background-color: var(--text-primary);
+    box-shadow: 0 0 15px var(--accent-dim);
+    border-color: var(--text-primary);
 }

@@ -1,96 +1,147 @@
-.verbal-memory-container {
+.vm-container {
     width: 100%;
-    height: 400px;
+    max-width: 800px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    min-height: 400px;
+}
+
+.vm-overlay,
+.vm-result-panel {
+    text-align: center;
+    display: flex;
     flex-direction: column;
+    align-items: center;
+    z-index: 10;
 }
 
-.vm-btn {
-    padding: 12px 24px;
-    font-size: 1.1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    border: none;
-    font-weight: 600;
+.vm-icon {
+    color: var(--accent-primary);
+    margin-bottom: 24px;
+    opacity: 0.9;
+}
+
+.vm-btn-start,
+.vm-retry-btn {
+    margin-top: 32px;
+    background: var(--bg-depth-2);
+    border: 1px solid var(--accent-primary);
+    color: var(--accent-primary);
+    padding: 12px 32px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.9rem;
     transition: all 0.2s;
-    color: white;
+    cursor: pointer;
 }
 
-.vm-btn.primary {
-    background-color: var(--primary);
+.vm-btn-start:hover,
+.vm-retry-btn:hover {
+    background: var(--accent-dim);
 }
 
-.vm-btn.primary:hover {
-    background-color: var(--primary-hover);
-}
-
-.vm-btn.large {
-    padding: 16px 32px;
-    font-size: 1.5rem;
-}
-
+/* PLAY AREA */
 .vm-play-area {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 40px;
+    width: 100%;
 }
 
-.vm-word {
+.vm-word-display {
+    margin-bottom: 48px;
+}
+
+.vm-word-display h1 {
+    font-family: var(--font-sans);
     font-size: 4rem;
     font-weight: 700;
-    color: white;
-    margin: 20px 0;
-}
-
-.vm-stats {
-    font-size: 1.25rem;
-    color: var(--text-secondary);
-}
-
-.vm-actions {
-    display: flex;
-    gap: 20px;
-}
-
-.vm-btn.answer {
-    width: 140px;
-    height: 50px;
-}
-
-.vm-btn.seen {
-    background-color: #f59e0b;
-    /* Yellow/Orange */
-    color: black;
-}
-
-.vm-btn.seen:hover {
-    background-color: #d97706;
-}
-
-.vm-btn.new {
-    background-color: var(--primary);
-}
-
-.vm-btn.new:hover {
-    background-color: var(--primary-hover);
-}
-
-.vm-result-screen {
+    color: #ffffff;
+    /* Default transparently to white (dark mode) */
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     text-align: center;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    /* Lift off background */
 }
 
-.vm-result-screen h1 {
-    font-size: 4rem;
-    font-weight: 800;
-    color: white;
-    margin-bottom: 8px;
+[data-theme="light"] .vm-word-display h1 {
+    color: #000000;
 }
 
-.vm-result-screen p {
+.vm-controls {
+    display: flex;
+    gap: 32px;
+}
+
+.vm-control-btn {
+    width: 160px;
+    padding: 20px 0;
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    font-weight: 600;
+    background: var(--bg-depth-2);
+    border: 1px solid var(--border-subtle);
+    color: #ffffff;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.1s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .vm-control-btn {
+    color: #000000;
+    background: #ffffff;
+}
+
+.vm-control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    background: var(--bg-depth-3);
+}
+
+.vm-control-btn.seen:hover {
+    border-color: var(--status-warning);
+    color: var(--status-warning) !important;
+}
+
+.vm-control-btn.new:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary) !important;
+}
+
+.vm-control-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* RESULTS */
+.vm-stats-grid {
+    display: flex;
+    gap: 48px;
+    margin-top: 32px;
+}
+
+.vm-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.vm-stat .label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.1em;
+}
+
+.vm-stat .value {
     font-size: 1.5rem;
-    color: var(--text-secondary);
-    margin-bottom: 32px;
+    font-weight: 400;
+    color: var(--text-primary);
 }

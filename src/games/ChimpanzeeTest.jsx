@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import GameWrapper from '../components/GameWrapper';
 import { useGameScore } from '../hooks/useGameScore';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { BrainCircuit, EyeOff } from 'lucide-react';
 import './ChimpanzeeTest.css';
 
 const GRID_ROWS = 8;
-const GRID_COLS = 10; // Large grid for spatial distribution
+const GRID_COLS = 10;
 
 export default function ChimpanzeeTest() {
     const { bestScore, sessionBest, saveScore } = useGameScore('chimpanzee');
@@ -16,10 +17,8 @@ export default function ChimpanzeeTest() {
     const [nextExpected, setNextExpected] = useState(1);
     const [lives, setLives] = useState(3);
 
-    // Generate level
     const startLevel = (lvl) => {
         setNextExpected(1);
-        setIsActive(true);
         setHidden(false);
 
         // Generate positions
@@ -39,48 +38,45 @@ export default function ChimpanzeeTest() {
         setNumbers(newNumbers);
     };
 
-    const [isActive, setIsActive] = useState(false);
-
     const handleTileClick = (numObj) => {
-        if (!isActive || gameState !== 'playing') return;
+        if (gameState !== 'playing') return;
 
-        // Check logic
+        // Trigger Hide on first correct click (val 1)
         if (numObj.val === 1) {
-            setHidden(true); // Hide all on first click
+            setHidden(true);
         }
 
         if (numObj.val === nextExpected) {
             // Correct
             if (nextExpected === numbers.length) {
                 // Level Complete
-                setIsActive(false);
                 const nextLvl = level + 1;
                 setLevel(nextLvl);
-                // Brief pause then next level
+
+                // Remove solved numbers visually immediately or just transition?
+                // Visual cleanup is nice.
+
                 setTimeout(() => {
                     startLevel(nextLvl);
-                }, 1000);
+                }, 800);
             } else {
                 setNextExpected(prev => prev + 1);
-                // Mark this tile as clicked (remove from list or mark visible/done?)
-                // We can remove it from "numbers" array to make it disappear
+                // Mark as clicked (remove from array roughly equates to "gone")
                 setNumbers(prev => prev.map(n => n.val === numObj.val ? { ...n, clicked: true } : n));
             }
         } else {
             // Wrong
             const newLives = lives - 1;
             setLives(newLives);
-            setHidden(false); // Reveal solution
-            setIsActive(false);
+            setHidden(false); // Reveal all for feedback
 
             if (newLives <= 0) {
                 endGame();
             } else {
-                // Retry logic: REPEAT same level? Or reduce level? 
-                // HB usually keeps level.
+                // Retry same level
                 setTimeout(() => {
                     startLevel(level);
-                }, 2000);
+                }, 1500);
             }
         }
     };
@@ -104,42 +100,45 @@ export default function ChimpanzeeTest() {
     return (
         <GameWrapper
             title="Chimpanzee Test"
-            description="Click the numbers in order. They will hide after the first click."
+            description="Click the numbers in sequential order. They minimize visibility after the first interaction."
             onRestart={startGame}
-            score={`Level ${numbers.length}`}
+            score={`Level ${level} | Lives ${lives}`}
             bestScore={bestScore ? `Lvl ${bestScore}` : null}
             sessionBest={sessionBest ? `Lvl ${sessionBest}` : null}
         >
             <div className="chimp-container">
                 {gameState === 'waiting' && (
-                    <div className="chimp-start">
-                        <h2>Are you smarter than a chimpanzee?</h2>
-                        <button className="chimp-btn" onClick={startGame}>Start Test</button>
+                    <div className="chimp-overlay">
+                        <BrainCircuit size={64} className="chimp-icon" />
+                        <h2>WORKING MEMORY MATRIX</h2>
+                        <p>Memorize position mapping.</p>
+                        <button className="chimp-btn-start" onClick={startGame}>INITIALIZE</button>
                     </div>
                 )}
 
                 {gameState === 'playing' && (
-                    <div className="chimp-game">
-                        <div className="chimp-stats">Lives: {'❤️'.repeat(lives)}</div>
+                    <div className="chimp-game-area">
                         <div className="chimp-grid">
                             {Array.from({ length: GRID_ROWS * GRID_COLS }).map((_, i) => {
                                 const numObj = numbers.find(n => n.pos === i);
 
-                                if (!numObj || numObj.clicked) return <div key={i} className="chimp-cell empty"></div>;
+                                // Render empty slot mostly, or number tile
+                                if (!numObj) return <div key={i} className="chimp-slot"></div>;
 
-                                // Logic: If not hidden, show number. If hidden, show box (unless it's the one we just clicked?)
-                                // If hidden is true, we show blank box.
+                                // If clicked, maybe fade out? Or just remove.
+                                if (numObj.clicked) return <div key={i} className="chimp-slot"></div>;
 
                                 return (
                                     <motion.div
                                         key={i}
-                                        className={`chimp-cell ${hidden ? 'hidden' : 'visible'}`}
+                                        className={`chimp-tile ${hidden ? 'hidden-mode' : 'visible-mode'}`}
                                         onClick={() => handleTileClick(numObj)}
                                         initial={{ scale: 0 }}
                                         animate={{ scale: 1 }}
                                         whileTap={{ scale: 0.9 }}
                                     >
-                                        <span style={{ opacity: hidden ? 0 : 1 }}>{numObj.val}</span>
+                                        <span className="tile-val">{numObj.val}</span>
+                                        {hidden && <div className="tile-cover"></div>}
                                     </motion.div>
                                 );
                             })}
@@ -148,9 +147,22 @@ export default function ChimpanzeeTest() {
                 )}
 
                 {gameState === 'result' && (
-                    <div className="chimp-result">
-                        <h1>Score: {level}</h1>
-                        <button className="chimp-btn" onClick={startGame}>Try Again</button>
+                    <div className="chimp-result-panel">
+                        <div className="result-display">
+                            <span className="result-val">{level}</span>
+                            <span className="result-unit">LEVEL</span>
+                        </div>
+
+                        <div className="chimp-stats-grid">
+                            <div className="chimp-stat">
+                                <span className="label">LIVES LEFT</span>
+                                <span className="value">{lives}</span>
+                            </div>
+                        </div>
+
+                        <button className="chimp-retry-btn" onClick={startGame}>
+                            RE-INITIALIZE
+                        </button>
                     </div>
                 )}
             </div>

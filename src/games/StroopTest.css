@@ -1,66 +1,128 @@
 .stroop-container {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.stroop-overlay,
+.stroop-result-panel {
+    text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 500px;
-}
-
-.stroop-start,
-.stroop-result,
-.stroop-play {
-    text-align: center;
-    width: 100%;
 }
 
 .stroop-icon {
-    color: var(--primary);
+    color: var(--accent-primary);
+    margin-bottom: 24px;
+    opacity: 0.9;
+}
+
+.stroop-btn-start,
+.stroop-retry-btn {
+    margin-top: 32px;
+    background: var(--bg-depth-2);
+    border: 1px solid var(--accent-primary);
+    color: var(--accent-primary);
+    padding: 12px 32px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.stroop-btn-start:hover,
+.stroop-retry-btn:hover {
+    background: var(--accent-dim);
+}
+
+/* PLAY AREA */
+.stroop-play {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stroop-hud {
+    font-family: var(--font-mono);
+    color: var(--text-tertiary);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
     margin-bottom: 24px;
 }
 
 .stroop-word {
-    font-size: 5rem;
-    font-weight: 900;
-    margin: 48px 0;
+    font-size: 6rem;
+    font-weight: 800;
+    margin: 32px 0 64px;
     text-transform: uppercase;
+    font-family: var(--font-sans);
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
-.stroop-options {
-    display: flex;
+.stroop-options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 16px;
-    justify-content: center;
+    width: 100%;
+    max-width: 500px;
 }
 
 .stroop-option-btn {
-    padding: 16px 32px;
-    background-color: var(--bg-card);
-    border: 2px solid var(--border);
+    padding: 24px;
+    background-color: var(--bg-depth-2);
+    border: 1px solid var(--border-subtle);
     color: var(--text-primary);
-    border-radius: 8px;
-    font-size: 1.2rem;
-    font-weight: 700;
+    border-radius: var(--radius-md);
+    font-size: 1.25rem;
+    font-weight: 600;
+    font-family: var(--font-mono);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.1s;
+    text-transform: uppercase;
 }
 
 .stroop-option-btn:hover {
-    border-color: var(--primary);
-    background-color: rgba(255, 255, 255, 0.05);
+    border-color: var(--accent-primary);
+    background-color: var(--bg-depth-3);
+    transform: translateY(-1px);
 }
 
-.stroop-btn.start {
-    padding: 12px 32px;
-    background-color: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    margin-top: 24px;
+.stroop-option-btn:active {
+    transform: translateY(1px);
+    background-color: var(--bg-depth-1);
 }
 
-.stroop-counter {
-    color: var(--text-secondary);
-    font-size: 1.2rem;
+/* RESULTS */
+.stroop-stats-grid {
+    display: flex;
+    gap: 48px;
+    margin-top: 32px;
+}
+
+.stroop-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.stroop-stat .label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.1em;
+}
+
+.stroop-stat .value {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--text-primary);
 }

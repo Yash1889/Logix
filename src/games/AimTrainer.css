@@ -1,123 +1,254 @@
 .aim-trainer-container {
     width: 100%;
-    height: 500px;
+    height: 100%;
+    min-height: 600px;
     position: relative;
-    background-color: var(--bg-card);
+    background-color: var(--bg-depth-1);
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
     user-select: none;
     overflow: hidden;
     cursor: crosshair;
+    padding: 0;
+    /* Full bleed */
 }
 
+/* OVERLAY */
 .aim-overlay,
-.aim-result {
-    width: 100%;
-    height: 100%;
+.aim-result-panel {
+    text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
+    /* Ensure center alignment */
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(15, 23, 42, 0.85);
+    /* Darker backdrop */
+    backdrop-filter: blur(8px);
 }
+
+/* Remove absolute positioning from overlay content if not needed, rely on flex center above */
 
 .aim-icon-large {
-    color: var(--primary);
-    margin-bottom: 20px;
+    color: var(--accent-primary);
+    margin-bottom: 32px;
+    filter: drop-shadow(0 0 20px var(--accent-dim));
 }
 
-.aim-btn {
-    margin-top: 20px;
-    padding: 12px 24px;
-    background-color: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1.1rem;
+.aim-title {
+    font-family: var(--font-sans);
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+    letter-spacing: -0.05em;
+}
+
+.aim-instructions {
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 48px;
+    border-left: 2px solid var(--accent-primary);
+    padding-left: 24px;
+    text-align: left;
+    max-width: 400px;
+}
+
+.aim-btn-start,
+.aim-retry-btn {
+    background: var(--bg-depth-2);
+    border: 1px solid var(--accent-primary);
+    color: var(--accent-primary);
+    padding: 16px 48px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 1rem;
     font-weight: 600;
+    transition: all 0.2s;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
+.aim-btn-start:hover,
+.aim-retry-btn:hover {
+    background: var(--accent-dim);
+    box-shadow: 0 0 30px var(--accent-dim);
+}
+
+/* Play Area */
 .aim-play-area {
     width: 100%;
     height: 100%;
     position: relative;
 }
 
-.aim-UI {
+/* HUD */
+.aim-hud {
     position: absolute;
-    top: 20px;
+    top: 32px;
     width: 100%;
     display: flex;
     justify-content: center;
-    gap: 40px;
+    gap: 64px;
     pointer-events: none;
+    z-index: 5;
 }
 
-.aim-counter,
-.aim-misses {
+.aim-hud-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: rgba(15, 23, 42, 0.8);
+    padding: 8px 24px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle);
+}
+
+.aim-hud-item .label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.1em;
+}
+
+.aim-hud-item .value {
+    font-family: var(--font-mono);
     font-size: 1.5rem;
-    color: var(--text-secondary);
+    color: var(--text-primary);
+    font-weight: 500;
 }
 
+.aim-hud-item .value.warn {
+    color: var(--status-warning);
+}
+
+/* TARGETS */
 .aim-target {
     position: absolute;
     transform: translate(-50%, -50%);
-    /* Center the target on coords */
-    color: var(--primary);
+    color: var(--accent-primary);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    filter: drop-shadow(0 0 10px var(--accent-dim));
+    z-index: 20;
 }
 
 .aim-target.start {
-    animation: pulse 2s infinite;
-}
-
-.aim-bullseye {
     position: absolute;
-    width: 10px;
-    height: 10px;
-    background-color: white;
-    border-radius: 50%;
-    pointer-events: none;
+    /* Relative to overlay */
+    flex-direction: column;
+    gap: 10px;
+    cursor: pointer;
+    margin-top: 40px;
+    /* Space from button */
 }
 
+.start .target-inner {
+    color: var(--accent-primary);
+    animation: spin 10s linear infinite;
+}
+
+.start .target-text {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+}
+
+.target-svg {
+    filter: drop-shadow(0 0 5px var(--accent-primary));
+}
+
+.aim-target:active {
+    transform: translate(-50%, -50%) scale(0.9);
+}
+
+.aim-target-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 1px solid var(--accent-primary);
+    opacity: 0.5;
+    animation: target-appear 0.3s var(--ease-precision) forwards;
+}
+
+@keyframes target-appear {
+    from {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* RESULT */
 .aim-stats-grid {
     display: flex;
-    gap: 32px;
-    margin-top: 24px;
+    gap: 48px;
+    margin: 40px 0;
 }
 
 .aim-stat {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
 }
 
-.aim-stat span {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
+.aim-stat .label {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.1em;
 }
 
-.aim-stat strong {
-    font-size: 1.25rem;
+.aim-stat .value {
+    font-size: 1.5rem;
+    font-weight: 400;
     color: var(--text-primary);
 }
 
-@keyframes pulse {
-    0% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-    }
+.result-label {
+    font-family: var(--font-mono);
+    color: var(--accent-primary);
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 8px;
+}
 
-    50% {
-        transform: translate(-50%, -50%) scale(1.1);
-        opacity: 0.8;
-    }
+.result-val {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+}
 
-    100% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-    }
+.result-unit {
+    font-size: 1.5rem;
+    color: var(--text-tertiary);
+    margin-left: 12px;
 }

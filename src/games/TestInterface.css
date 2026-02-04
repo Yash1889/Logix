@@ -1,0 +1,95 @@
+/* TEST INTERFACE SYSTEM OVERRIDES */
+/* Injected via GameWrapper to standardize all 50+ games */
+
+/* CONTENT TYPOGRAPHY */
+.game-content-container h1,
+.game-content-container h2 {
+    font-family: var(--font-sans);
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-primary);
+}
+
+.game-content-container h1 {
+    font-size: 4rem;
+    margin-bottom: 0.5em;
+}
+
+.game-content-container h2 {
+    font-size: 1.5rem;
+    color: var(--text-tertiary);
+}
+
+.game-content-container p {
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+    max-width: 60ch;
+    margin: 0 auto 2rem auto;
+}
+
+/* STANDARD GAME ICONS */
+.game-content-container svg {
+    margin-bottom: 2rem;
+    opacity: 0.8;
+}
+
+/* CLICK AREAS */
+.reaction-game-area,
+.aim-game-area {
+    border-radius: var(--radius-sm);
+    box-shadow: 0 0 0 1px var(--border-subtle);
+    cursor: crosshair;
+}
+
+.reaction-game-area.waiting {
+    background: var(--bg-depth-1);
+    color: var(--text-secondary);
+}
+
+.reaction-game-area.ready {
+    background: var(--status-error);
+    /* Red for wait? Or Standard? HB is red. Logic: Wait for Green. */
+    color: #fff;
+}
+
+.reaction-game-area.now {
+    background: var(--status-success);
+    color: #fff;
+}
+
+/* GENERIC BUTTONS INSIDE GAMES */
+.game-content-container button {
+    background: transparent;
+    border: 1px solid var(--accent-primary);
+    color: var(--accent-primary);
+    padding: 12px 32px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.game-content-container button:hover {
+    background: var(--accent-dim);
+    box-shadow: 0 0 12px var(--accent-dim);
+}
+
+/* INPUTS INSIDE GAMES */
+.game-content-container input {
+    background: var(--bg-depth-0);
+    border: 1px solid var(--border-strong);
+    color: var(--text-primary);
+    padding: 12px;
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
+    text-align: center;
+    border-radius: var(--radius-sm);
+}
+
+.game-content-container input:focus {
+    border-color: var(--accent-primary);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent-dim);
+}

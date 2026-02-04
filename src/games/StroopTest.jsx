@@ -1,32 +1,33 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import GameWrapper from '../components/GameWrapper';
 import { useGameScore } from '../hooks/useGameScore';
-import { Shuffle } from 'lucide-react';
+import { Shuffle, CheckCircle, XCircle } from 'lucide-react';
 import './StroopTest.css';
 
 const COLORS = [
-    { name: 'RED', hex: '#ef4444' },
-    { name: 'BLUE', hex: '#3b82f6' },
-    { name: 'GREEN', hex: '#22c55e' },
-    { name: 'YELLOW', hex: '#eab308' }
+    { name: 'RED', hex: '#ef4444', class: 'color-red' },
+    { name: 'BLUE', hex: '#3b82f6', class: 'color-blue' },
+    { name: 'GREEN', hex: '#22c55e', class: 'color-green' },
+    { name: 'YELLOW', hex: '#eab308', class: 'color-yellow' }
 ];
 
 const TOTAL_ROUNDS = 10;
+const PENALTY_MS = 1000;
 
 export default function StroopTest() {
     const { bestScore, sessionBest, saveScore } = useGameScore('stroop');
     const [gameState, setGameState] = useState('waiting');
     const [round, setRound] = useState(0);
-    const [currentWord, setCurrentWord] = useState({ text: '', colorHex: '' });
+    const [currentWord, setCurrentWord] = useState({ text: '', colorHex: '', colorName: '' });
     const [startTime, setStartTime] = useState(0);
     const [totalTime, setTotalTime] = useState(0);
     const [correctCount, setCorrectCount] = useState(0);
+    const [feedback, setFeedback] = useState(null); // 'correct' | 'wrong'
 
     // Meta metrics
     const [congruentDelay, setCongruentDelay] = useState([]);
     const [incongruentDelay, setIncongruentDelay] = useState([]);
 
-    // Setup round
     const nextRound = () => {
         if (round >= TOTAL_ROUNDS) {
             endGame();
@@ -34,63 +35,81 @@ export default function StroopTest() {
         }
 
         // Generate random word and random color
+        // Ensure we don't get the same combination 5 times in a row? Random is fine.
         const wordObj = COLORS[Math.floor(Math.random() * COLORS.length)];
         const colorObj = COLORS[Math.floor(Math.random() * COLORS.length)];
 
         setCurrentWord({ text: wordObj.name, colorHex: colorObj.hex, colorName: colorObj.name });
         setStartTime(Date.now());
         setRound(prev => prev + 1);
+        setFeedback(null);
     };
 
     const endGame = () => {
-        // Score is average time IF accuracy is decent? Or just correct count?
-        // HB standard: usually pure time but with penalty.
-        // Let's use Correct Count as primary "score" for now? 
-        // Wait, usually it's "Time taken to complete X correct".
-        // Let's make score: Average Reaction Time (ms)
-        // But we penalize wrong answers.
-        // Let's penalize +1000ms for wrong answer.
-
-        // Average Time per round
-        const avgMs = Math.round(totalTime / TOTAL_ROUNDS);
-
-        const accuracy = Math.round((correctCount / TOTAL_ROUNDS) * 100);
-
-        const meta = {
-            accuracy: accuracy,
-            avgReaction: avgMs
-        };
-
-        saveScore(avgMs, true, meta); // Lower is better
-        setGameState('result');
+        // Average Time per round (including penalties)
+        const finalTotal = totalTime;
+        // Note: totalTime state update from last round might not be flushed if we called endGame directly? 
+        // Actually, handleChoice updates totalTime then calls nextRound. 
+        // If round >= TOTAL, nextRound calls endGame.
+        // But the state update "setTotalTime" is async.
+        // We need to pass the running total? Or just use functional update in handleChoice effectively?
+        // Actually, doing `setTotalTime` then `nextRound` which reads `totalTime` is risky.
+        // Better to calculate score in a useEffect or pass it. 
+        // PRO TIP: Just use local var for the running summary in logical flow or rely on the state update in render.
+        // Simplest fix: Calculate final avg in next "render" or pass value.
+        // Let's rely on the state being updated *before* the round check logic triggers? No, nextRound is called immediately.
+        // We will fix logic in handleChoice.
     };
 
     const handleChoice = (selectedColorName) => {
         const endTime = Date.now();
         const timeTaken = endTime - startTime;
-
-        setTotalTime(prev => prev + timeTaken);
-
-        // Check correctness (Must match COLOR, not TEXT)
-        // TEXT: RED, COLOR: BLUE -> Correct choice: BLUE
+        let penalty = 0;
 
         const isCongruent = currentWord.text === currentWord.colorName;
+        const isCorrect = selectedColorName === currentWord.colorName;
 
-        if (selectedColorName === currentWord.colorName) {
+        if (isCorrect) {
             setCorrectCount(prev => prev + 1);
-
-            // Log delay for congruent vs incongruent
+            setFeedback('correct');
             if (isCongruent) {
                 setCongruentDelay(prev => [...prev, timeTaken]);
             } else {
                 setIncongruentDelay(prev => [...prev, timeTaken]);
             }
         } else {
-            // Wrong answer penalty: add 1000ms to total time?
-            setTotalTime(prev => prev + 1000); // Penalty
+            setFeedback('wrong');
+            penalty = PENALTY_MS;
         }
 
-        nextRound();
+        const newTotal = totalTime + timeTaken + penalty;
+        setTotalTime(newTotal);
+
+        // Immediate transition vs slight delay for feedback?
+        // Stroop should be fast. Feedback flashes?
+        // Let's do a tiny delay of 100ms or instant? Instant is harsh but pro.
+        // Let's go instant for "Reaction" category.
+
+        if (round + 1 >= TOTAL_ROUNDS) {
+            finalizeGame(newTotal, correctCount + (isCorrect ? 1 : 0));
+        } else {
+            nextRound();
+        }
+    };
+
+    const finalizeGame = (finalTime, finalCorrect) => {
+        const avgMs = Math.round(finalTime / TOTAL_ROUNDS);
+        const accuracy = Math.round((finalCorrect / TOTAL_ROUNDS) * 100);
+
+        const meta = {
+            accuracy: accuracy,
+            avgReaction: avgMs,
+            congruentAvg: congruentDelay.length ? Math.round(congruentDelay.reduce((a, b) => a + b, 0) / congruentDelay.length) : 0,
+            incongruentAvg: incongruentDelay.length ? Math.round(incongruentDelay.reduce((a, b) => a + b, 0) / incongruentDelay.length) : 0,
+        };
+
+        saveScore(avgMs, true, meta); // Lower is better
+        setGameState('result');
     };
 
     const startGame = () => {
@@ -100,13 +119,23 @@ export default function StroopTest() {
         setCorrectCount(0);
         setCongruentDelay([]);
         setIncongruentDelay([]);
-        nextRound();
+
+        // Need to reset state first, then start. 
+        // Using timeout to push to next tick
+        setTimeout(() => {
+            // Initial round
+            const wordObj = COLORS[Math.floor(Math.random() * COLORS.length)];
+            const colorObj = COLORS[Math.floor(Math.random() * COLORS.length)];
+            setCurrentWord({ text: wordObj.name, colorHex: colorObj.hex, colorName: colorObj.name });
+            setStartTime(Date.now());
+            setRound(1); // Start at 1
+        }, 0);
     };
 
     return (
         <GameWrapper
             title="Stroop Test"
-            description="Select the color of the text, not what the text says."
+            description="Select the COLOR of the text, ignoring the word itself."
             onRestart={startGame}
             score={gameState === 'result' ? `${Math.round(totalTime / TOTAL_ROUNDS)} ms` : null}
             bestScore={bestScore ? `${bestScore} ms` : null}
@@ -114,17 +143,20 @@ export default function StroopTest() {
         >
             <div className="stroop-container">
                 {gameState === 'waiting' && (
-                    <div className="stroop-start">
+                    <div className="stroop-overlay">
                         <Shuffle size={64} className="stroop-icon" />
-                        <h2>Stroop Effect Test</h2>
-                        <p>Click the button matching the <strong>COLOR</strong> of the word shown.</p>
-                        <button className="stroop-btn start" onClick={startGame}>Start Test</button>
+                        <h2>COGNITIVE INTERFERENCE PROTOCOL</h2>
+                        <p>Identify the <strong>INK COLOR</strong>, ignore the written word.</p>
+                        <button className="stroop-btn-start" onClick={startGame}>INITIALIZE</button>
                     </div>
                 )}
 
                 {gameState === 'playing' && (
                     <div className="stroop-play">
-                        <div className="stroop-counter">{round} / {TOTAL_ROUNDS}</div>
+                        <div className="stroop-hud">
+                            <span>ROUND: {round} / {TOTAL_ROUNDS}</span>
+                        </div>
+
                         <div
                             className="stroop-word"
                             style={{ color: currentWord.colorHex }}
@@ -132,7 +164,7 @@ export default function StroopTest() {
                             {currentWord.text}
                         </div>
 
-                        <div className="stroop-options">
+                        <div className="stroop-options-grid">
                             {COLORS.map(c => (
                                 <button
                                     key={c.name}
@@ -147,14 +179,23 @@ export default function StroopTest() {
                 )}
 
                 {gameState === 'result' && (
-                    <div className="stroop-result">
-                        <Shuffle size={64} className="stroop-icon" />
-                        <h1>{Math.round(totalTime / TOTAL_ROUNDS)} ms</h1>
-                        <p>Average Response Time (with penalties)</p>
-                        <div className="stroop-stats">
-                            <p>Accuracy: {Math.round((correctCount / TOTAL_ROUNDS) * 100)}%</p>
+                    <div className="stroop-result-panel">
+                        <div className="result-display">
+                            <span className="result-val">{Math.round(totalTime / TOTAL_ROUNDS)}</span>
+                            <span className="result-unit">ms</span>
                         </div>
-                        <button className="stroop-btn start" onClick={startGame}>Try Again</button>
+                        <p>Average Response Time (Penalty Adjusted)</p>
+
+                        <div className="stroop-stats-grid">
+                            <div className="stroop-stat">
+                                <span className="label">ACCURACY</span>
+                                <span className="value">{Math.round((correctCount / TOTAL_ROUNDS) * 100)}%</span>
+                            </div>
+                        </div>
+
+                        <button className="stroop-retry-btn" onClick={startGame}>
+                            RE-TEST
+                        </button>
                     </div>
                 )}
             </div>

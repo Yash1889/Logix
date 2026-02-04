@@ -39,24 +39,101 @@
 
 /* States */
 .reaction-game-area.waiting {
-    background-color: var(--primary);
+    background-color: var(--bg-depth-2);
+    border: 2px dashed var(--border-subtle);
+    color: var(--text-secondary);
 }
 
 .reaction-game-area.ready {
-    background-color: #ef4444;
-    /* Red */
+    background-color: var(--status-error);
+    color: #fff;
+    cursor: wait;
 }
 
 .reaction-game-area.now {
-    background-color: #22c55e;
-    /* Green */
+    background-color: var(--status-success);
+    color: #000;
+    cursor: pointer;
 }
 
 .reaction-game-area.result {
-    background-color: var(--primary);
+    background-color: var(--bg-depth-1);
+    color: var(--text-primary);
 }
 
 .reaction-game-area.early {
-    background-color: #f59e0b;
-    /* Orange/Yellow */
+    background-color: var(--status-warning);
+    color: #000;
+}
+
+/* UI Elements */
+.result-display {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.result-val {
+    font-size: 6rem;
+    font-weight: 300;
+    font-family: var(--font-sans);
+    line-height: 1;
+}
+
+.result-unit {
+    font-size: 1.5rem;
+    font-family: var(--font-mono);
+    opacity: 0.6;
+}
+
+.instruction-sub {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    margin-top: 8px;
+}
+
+.reaction-meta-warning {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 24px;
+    color: var(--status-warning);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    background: rgba(245, 158, 11, 0.1);
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+}
+
+/* Animations */
+.pulse-loader {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: 0 auto 32px;
+    background: rgba(255, 255, 255, 0.2);
+    animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+    }
+
+    50% {
+        transform: scale(1);
+        opacity: 1;
+        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+    }
+
+    100% {
+        transform: scale(0.8);
+        opacity: 0;
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    }
 }

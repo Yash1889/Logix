@@ -1,63 +1,133 @@
-.visual-memory-container {
+.vm-container {
     width: 100%;
+    max-width: 600px;
     height: 500px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: var(--bg-card);
 }
 
-.vm-start-screen {
+.vm-overlay,
+.vm-result-panel {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.vm-start-btn {
-    padding: 16px 32px;
-    font-size: 1.5rem;
-    font-weight: 700;
-    background-color: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 12px;
+.vm-icon {
+    color: var(--accent-primary);
+    margin-bottom: 24px;
+    opacity: 0.9;
+}
+
+.vm-btn-start,
+.vm-retry-btn {
+    margin-top: 32px;
+    background: var(--bg-depth-2);
+    border: 1px solid var(--accent-primary);
+    color: var(--accent-primary);
+    padding: 12px 32px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.9rem;
+    transition: all 0.2s;
     cursor: pointer;
-    margin-top: 20px;
-    transition: background 0.2s;
 }
 
-.vm-start-btn:hover {
-    background-color: var(--primary-hover);
+.vm-btn-start:hover,
+.vm-retry-btn:hover {
+    background: var(--accent-dim);
 }
 
-.vm-stats {
-    margin-bottom: 20px;
-    font-size: 1.2rem;
-    color: var(--text-secondary);
+/* PLAY AREA */
+.vm-play-area {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .vm-grid {
     display: grid;
-    gap: 8px;
     width: 100%;
-    max-width: 400px;
     aspect-ratio: 1;
+    background: var(--bg-depth-2);
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
 }
 
 .vm-tile {
-    background-color: #2a2a2a;
-    /* Dark gray */
-    border-radius: 8px;
+    background-color: var(--bg-depth-3);
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: background-color 0.1s;
+    transition: background-color 0.2s, transform 0.1s;
+    border: 1px solid transparent;
 }
 
-.vm-tile.active {
-    background-color: white;
+.vm-tile:hover {
+    background-color: var(--bg-depth-1);
 }
 
-.vm-tile.selected {
-    background-color: white;
-    /* Keep white once selected correctly */
+/* States */
+.vm-tile.show {
+    background-color: var(--text-primary);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    transform: scale(0.95);
 }
 
-/* Feedback for wrong clicks could be added if we delay fail state */
+.vm-tile.correct {
+    background-color: var(--accent-primary);
+    border-color: var(--accent-text);
+}
+
+.vm-tile.wrong {
+    background-color: var(--status-error);
+    animation: shake 0.4s var(--ease-precision);
+}
+
+/* RESULTS */
+.vm-stats-grid {
+    display: flex;
+    gap: 48px;
+    margin-top: 32px;
+}
+
+.vm-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.vm-stat .label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.1em;
+}
+
+.vm-stat .value {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--text-primary);
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-4px);
+    }
+
+    75% {
+        transform: translateX(4px);
+    }
+}

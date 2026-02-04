@@ -19,6 +19,7 @@ Includes 15+ Tests across 6 cognitive pillars:
 - **High-Visibility**: Deep Black background with Pure White typography.
 - **Neon Accents**: Cyan/Violet indicators for rapid signal processing.
 - **Wide-Screen Dashboard**: Full-width data visualization.
+- **Immersive Test Chambers**: Distraction-free, full-screen environments for high-focus assessments (Risk Decision, Tower Planning, Aim Trainer, Typing Test).
 
 ### 🧬 The Profile Engine
 - **Cognitive Map**: A dynamic Radar Chart visualizes your strengths across Memory, Speed, Flexibility, Reasoning, and EQ.

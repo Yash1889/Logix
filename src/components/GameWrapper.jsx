@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, RotateCcw } from 'lucide-react';
+import { ArrowLeft, RotateCcw, Monitor } from 'lucide-react';
 import './GameWrapper.css';
+import '../games/TestInterface.css'; // Global game styles
 
 export default function GameWrapper({
     title,
@@ -15,47 +16,45 @@ export default function GameWrapper({
 
     return (
         <div className="game-wrapper">
-            <div className="game-header">
-                <button onClick={() => navigate('/')} className="game-back-btn">
-                    <ArrowLeft size={24} />
-                    <span>Back to Games</span>
+            <header className="game-header">
+                <button onClick={() => navigate('/dashboard')} className="game-btn-nav">
+                    <ArrowLeft size={18} />
+                    ABORT_SEQ
                 </button>
-                <h1 className="game-title">{title}</h1>
-            </div>
+                <div className="game-header-title">
+                    TEST_PROTOCOL // {title.toUpperCase()}
+                </div>
+            </header>
 
-            <div className="game-content-container">
+            <main className="game-content-container">
                 {children}
-            </div>
+            </main>
 
-            <div className="game-footer">
-                {onRestart && (
-                    <button onClick={onRestart} className="game-restart-btn">
-                        <RotateCcw size={20} />
-                        Restart Test
-                    </button>
-                )}
+            <footer className="game-footer">
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    {onRestart && (
+                        <button onClick={onRestart} className="game-action-btn">
+                            <RotateCcw size={16} />
+                            REINITIALIZE
+                        </button>
+                    )}
+                </div>
 
-                <div className="game-stats">
+                <div className="telemetry-panel">
                     {score !== null && score !== undefined && (
-                        <div className="stat-item">
-                            <span className="stat-label">Current</span>
-                            <span className="stat-value">{score}</span>
+                        <div className="telemetry-item">
+                            <span className="telemetry-label">CURRENT_READING</span>
+                            <span className="telemetry-val highlight">{score}</span>
                         </div>
                     )}
-                    {sessionBest !== null && (
-                        <div className="stat-item">
-                            <span className="stat-label">Session Best</span>
-                            <span className="stat-value">{sessionBest}</span>
-                        </div>
-                    )}
-                    {bestScore !== null && (
-                        <div className="stat-item highlight">
-                            <span className="stat-label">All-Time Best</span>
-                            <span className="stat-value">{bestScore}</span>
+                    {(sessionBest !== null || bestScore !== null) && (
+                        <div className="telemetry-item">
+                            <span className="telemetry-label">RECORD_HIGH</span>
+                            <span className="telemetry-val">{sessionBest || bestScore}</span>
                         </div>
                     )}
                 </div>
-            </div>
+            </footer>
         </div>
     );
 }

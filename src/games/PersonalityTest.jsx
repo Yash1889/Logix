@@ -14,13 +14,19 @@ export default function PersonalityTest() {
     const [answers, setAnswers] = useState({});
     const navigate = useNavigate();
 
+    const [isTransitioning, setIsTransitioning] = useState(false);
+
     const startTest = () => {
         setGameState('playing');
         setCurrentQIndex(0);
         setAnswers({});
+        setIsTransitioning(false);
     };
 
     const handleAnswer = (score) => {
+        if (isTransitioning) return;
+        setIsTransitioning(true);
+
         const question = QUESTIONS[currentQIndex];
         const newAnswers = { ...answers, [question.id]: score };
         setAnswers(newAnswers);
@@ -28,6 +34,7 @@ export default function PersonalityTest() {
         if (currentQIndex < QUESTIONS.length - 1) {
             setTimeout(() => {
                 setCurrentQIndex(prev => prev + 1);
+                setIsTransitioning(false);
             }, 250);
         } else {
             calculateAndEnd(newAnswers);
@@ -125,7 +132,7 @@ export default function PersonalityTest() {
                                 exit={{ opacity: 0, y: -20 }}
                                 className="p-question-text"
                             >
-                                {QUESTIONS[currentQIndex].text}
+                                {QUESTIONS[currentQIndex]?.text}
                             </motion.h2>
                         </AnimatePresence>
 
@@ -135,6 +142,7 @@ export default function PersonalityTest() {
                                     key={label}
                                     className={`p-option-btn val-${val}`}
                                     onClick={() => handleAnswer(val)}
+                                    disabled={isTransitioning}
                                 >
                                     <div className="p-dot"></div>
                                     <span>{label}</span>

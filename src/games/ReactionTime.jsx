@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import GameWrapper from '../components/GameWrapper';
 import { useGameScore } from '../hooks/useGameScore';
-import { Zap, AlertTriangle } from 'lucide-react';
+import { Zap, AlertTriangle, MousePointer } from 'lucide-react';
 import './ReactionTime.css';
 
 export default function ReactionTime() {
@@ -9,7 +9,7 @@ export default function ReactionTime() {
     const [gameState, setGameState] = useState('waiting'); // waiting, ready, now, result, early
     const [startTime, setStartTime] = useState(0);
     const [score, setScore] = useState(null);
-    const [attempts, setAttempts] = useState([]); // Store last 5 attempts for average
+    const [attempts, setAttempts] = useState([]);
     const [falseStarts, setFalseStarts] = useState(0);
 
     const timerRef = useRef(null);
@@ -17,7 +17,8 @@ export default function ReactionTime() {
     const startGame = () => {
         setGameState('ready');
         setScore(null);
-        const randomDelay = Math.floor(Math.random() * 3000) + 2000; // 2-5 seconds
+        // Random delay between 2s and 5s
+        const randomDelay = Math.floor(Math.random() * 3000) + 2000;
 
         timerRef.current = setTimeout(() => {
             setGameState('now');
@@ -25,34 +26,30 @@ export default function ReactionTime() {
         }, randomDelay);
     };
 
-    const handleClick = () => {
+    const handleAction = () => {
         if (gameState === 'waiting') {
             startGame();
         } else if (gameState === 'ready') {
+            // Early click
             clearTimeout(timerRef.current);
             setGameState('early');
             setFalseStarts(prev => prev + 1);
         } else if (gameState === 'now') {
+            // Success
             const endTime = Date.now();
             const reactionTime = endTime - startTime;
 
-            // Update score history
-            const newAttempts = [...attempts, reactionTime].slice(-5); // Keep last 5
+            const newAttempts = [...attempts, reactionTime].slice(-5);
             setAttempts(newAttempts);
             setScore(reactionTime);
 
-            // Calculate average of last 5 or just save this one? 
-            // HB usually saves the average of 5. For V2, let's just save every valid attempt 
-            // but maybe suggest the user do 5? 
-            // Let's stick to saving singular best for now, but log meta.
-
             const meta = {
-                falseStarts: falseStarts,
-                recentAverage: newAttempts.reduce((a, b) => a + b, 0) / newAttempts.length,
+                falseStarts,
+                recentAverage: Math.round(newAttempts.reduce((a, b) => a + b, 0) / newAttempts.length),
                 attemptsCount: newAttempts.length
             };
 
-            saveScore(reactionTime, true, meta); // true = lower is better
+            saveScore(reactionTime, true, meta); // Lower is better
             setGameState('result');
         } else if (gameState === 'result' || gameState === 'early') {
             startGame();
@@ -67,14 +64,31 @@ export default function ReactionTime() {
         setFalseStarts(0);
     };
 
+    // Keyboard support
     useEffect(() => {
-        return () => clearTimeout(timerRef.current);
-    }, []);
+        const handleKeyDown = (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault(); // Prevent scrolling
+                e.stopPropagation();
+                if (gameState !== 'waiting') { // Prevent accidental start on space if focused elsewhere? No, global is fine for this game.
+                    handleAction();
+                } else {
+                    handleAction();
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            clearTimeout(timerRef.current);
+        };
+    }, [gameState]); // Dependency needed to access current gameState in closure if not using refs, but here handleAction uses state.
 
     return (
         <GameWrapper
             title="Reaction Time"
-            description="Test your visual reflexes. Click as soon as the screen turns green."
+            description="Measure your visual reflexes. Wait for the green signal."
             onRestart={handleRestart}
             score={score ? `${score} ms` : null}
             bestScore={bestScore ? `${bestScore} ms` : null}
@@ -82,38 +96,43 @@ export default function ReactionTime() {
         >
             <div
                 className={`reaction-game-area ${gameState}`}
-                onMouseDown={handleClick}
+                onMouseDown={handleAction}
             >
                 <div className="reaction-content">
                     {gameState === 'waiting' && (
                         <>
-                            <Zap size={80} className="reaction-icon" />
-                            <h2>Click anywhere to start</h2>
-                            <p>When the red box turns green, click as quickly as you can.</p>
+                            <Zap size={64} className="reaction-icon" />
+                            <h2>INITIATE SEQUENCE</h2>
+                            <p>Click or press SPACE to start.</p>
+                            <p className="instruction-sub">Wait for the green signal, then react immediately.</p>
                         </>
                     )}
 
                     {gameState === 'ready' && (
                         <>
-                            <h2>Wait for green...</h2>
+                            <div className="pulse-loader"></div>
+                            <h2>AWAIT SIGNAL...</h2>
                         </>
                     )}
 
                     {gameState === 'now' && (
                         <>
-                            <h2>CLICK!</h2>
+                            <h2>EXECUTE!</h2>
+                            <p>CLICK NOW</p>
                         </>
                     )}
 
                     {gameState === 'result' && (
                         <>
-                            <Zap size={80} className="reaction-icon" />
-                            <h1>{score} ms</h1>
-                            <p>Click to try again</p>
+                            <div className="result-display">
+                                <span className="result-val">{score}</span>
+                                <span className="result-unit">ms</span>
+                            </div>
+                            <p>Click to re-test</p>
                             {falseStarts > 0 && (
                                 <div className="reaction-meta-warning">
                                     <AlertTriangle size={16} />
-                                    <span>{falseStarts} false start{falseStarts !== 1 ? 's' : ''} recorded</span>
+                                    <span>FALSE_STARTS_DETECTED: {falseStarts}</span>
                                 </div>
                             )}
                         </>
@@ -121,9 +140,10 @@ export default function ReactionTime() {
 
                     {gameState === 'early' && (
                         <>
-                            <AlertTriangle size={80} className="reaction-icon" />
-                            <h2>Too soon!</h2>
-                            <p>Click to try again</p>
+                            <AlertTriangle size={64} className="reaction-icon" />
+                            <h2>PREMATURE INPUT</h2>
+                            <p>Signal was not active.</p>
+                            <p>Click to retry.</p>
                         </>
                     )}
                 </div>

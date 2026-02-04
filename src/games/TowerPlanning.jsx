@@ -1,189 +1,230 @@
 import { useState, useEffect } from 'react';
 import GameWrapper from '../components/GameWrapper';
 import { useGameScore } from '../hooks/useGameScore';
-import GlassButton from '../components/ui/GlassButton';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Layers } from 'lucide-react';
 import './TowerPlanning.css';
 
-// 3 Disks to start. Maybe 4 levels?
-// Standard Hanoi rules.
-
-const LEVELS = [
-    { disks: 3, par: 7 },
-    { disks: 4, par: 15 },
-    { disks: 5, par: 31 } // 2^n - 1
-];
+const MAX_DISKS = 7;
 
 export default function TowerPlanning() {
     const { bestScore, sessionBest, saveScore } = useGameScore('tower-planning');
     const [gameState, setGameState] = useState('waiting');
 
-    const [levelIndex, setLevelIndex] = useState(0);
-    const [towers, setTowers] = useState([[], [], []]); // 3 pegs
-    const [selectedDisk, setSelectedDisk] = useState(null); // { val, fromPeg }
+    // Game State
+    const [diskCount, setDiskCount] = useState(3);
+    const [towers, setTowers] = useState([[], [], []]); // [ [disc1, disc2], [], [] ]
+    const [selectedDisk, setSelectedDisk] = useState(null); // { val: 1, fromTower: 0 }
     const [moves, setMoves] = useState(0);
-    const [totalMoves, setTotalMoves] = useState(0);
-    const [levelStartTime, setLevelStartTime] = useState(0);
+    const [minMoves, setMinMoves] = useState(0);
 
-    // Scoring: 
-    // Perfection Score (Moves vs Par)
-    // Time efficiency.
+    // Timer
+    const [startTime, setStartTime] = useState(0);
+    const [timeElapsed, setTimeElapsed] = useState(0);
 
-    const initLevel = (idx) => {
-        const numDisks = LEVELS[idx].disks;
-        // Peg 0 has [3, 2, 1] (top is end of array?)
-        // Let's say top is end of array. Stack.
-        // [3, 2, 1] -> 1 is smallest, on top? 
-        // Usually disks are 1..N. Bigger number = bigger disk.
-        // Smallest on top.
-
-        const peg0 = [];
-        for (let i = numDisks; i >= 1; i--) {
-            peg0.push(i);
+    // Initialize level
+    const startLevel = (count) => {
+        const newStack = [];
+        for (let i = count; i >= 1; i--) {
+            newStack.push(i);
         }
 
-        setTowers([peg0, [], []]);
+        setTowers([newStack, [], []]);
+        setDiskCount(count);
         setMoves(0);
+        setMinMoves(Math.pow(2, count) - 1);
         setSelectedDisk(null);
-        setLevelStartTime(Date.now());
-    };
-
-    const startGame = () => {
+        setStartTime(Date.now());
         setGameState('playing');
-        setTotalMoves(0);
-        setLevelIndex(0);
-        initLevel(0);
     };
 
-    const handlePegClick = (pegIndex) => {
-        const peg = towers[pegIndex];
+    useEffect(() => {
+        let interval;
+        if (gameState === 'playing') {
+            interval = setInterval(() => {
+                setTimeElapsed(Math.floor((Date.now() - startTime) / 1000));
+            }, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [gameState, startTime]);
 
-        if (selectedDisk === null) {
-            // Select top disk
-            if (peg.length === 0) return;
-            const disk = peg[peg.length - 1];
-            setSelectedDisk({ val: disk, fromPeg: pegIndex });
+    const handleTowerClick = (towerIndex) => {
+        if (gameState !== 'playing') return;
+
+        const tower = towers[towerIndex];
+        const topDisk = tower[tower.length - 1];
+
+        // If no disk selected, display feedback or select
+        if (!selectedDisk) {
+            if (topDisk) {
+                setSelectedDisk({ val: topDisk, fromTower: towerIndex });
+            }
         } else {
-            // Attempt move
-            if (pegIndex === selectedDisk.fromPeg) {
-                // Deselect
+            // Deselect if clicking same tower
+            if (selectedDisk.fromTower === towerIndex) {
                 setSelectedDisk(null);
                 return;
             }
 
-            const topDisk = peg.length > 0 ? peg[peg.length - 1] : Infinity;
-
-            if (selectedDisk.val < topDisk) {
-                // Valid move
+            // Move rule
+            if (!topDisk || topDisk > selectedDisk.val) {
+                // VALID MOVE
                 const newTowers = [...towers];
-                newTowers[selectedDisk.fromPeg] = newTowers[selectedDisk.fromPeg].slice(0, -1);
-                newTowers[pegIndex] = [...newTowers[pegIndex], selectedDisk.val];
+                // Remove from old
+                newTowers[selectedDisk.fromTower] = newTowers[selectedDisk.fromTower].slice(0, -1);
+                // Add to new
+                newTowers[towerIndex] = [...newTowers[towerIndex], selectedDisk.val];
 
                 setTowers(newTowers);
                 setMoves(m => m + 1);
-                setTotalMoves(tm => tm + 1);
                 setSelectedDisk(null);
 
-                checkWin(newTowers, pegIndex);
+                // Check Win: All disks on tower 2 (index 2)
+                if (towerIndex === 2 && newTowers[2].length === diskCount) {
+                    endLevel(true);
+                }
             } else {
-                // Invalid
-                // Shake/Error feedback?
+                // INVALID MOVE
                 setSelectedDisk(null);
             }
         }
     };
 
-    const checkWin = (currentTowers, targetPeg) => {
-        // Assuming target can be any peg other than 0? Or strictly peg 2?
-        // Usually peg 2 (rightmost).
-        if (targetPeg !== 2) return;
+    const endLevel = (success) => {
+        if (success) {
+            const efficiency = minMoves / moves;
+            const baseScore = diskCount * 1000;
+            const finalScore = Math.floor(baseScore * efficiency - (timeElapsed * 10));
 
-        const numDisks = LEVELS[levelIndex].disks;
-        if (currentTowers[2].length === numDisks) {
-            // Won level
-            if (levelIndex < LEVELS.length - 1) {
-                setTimeout(() => {
-                    setLevelIndex(prev => {
-                        const next = prev + 1;
-                        initLevel(next);
-                        return next;
-                    });
-                }, 500);
-            } else {
-                endGame();
-            }
+            const meta = {
+                disks: diskCount,
+                moves,
+                minMoves,
+                efficiency: (efficiency * 100).toFixed(1) + '%',
+                time: timeElapsed
+            };
+
+            saveScore(finalScore > 0 ? finalScore : 100, false, meta);
+            setGameState('result');
         }
-    };
-
-    const endGame = () => {
-        // Score: Total Moves?
-        // Or "Planning Efficiency" = (Total Par / Total Moves) * 100
-        const totalPar = LEVELS.reduce((acc, l) => acc + l.par, 0);
-        const efficiency = Math.round((totalPar / totalMoves) * 100); // Capped at 100?
-
-        // If moves < par, impossible. 
-        // If perfect, 100%.
-
-        const meta = {
-            totalMoves,
-            totalPar,
-            efficiency
-        };
-
-        saveScore(efficiency > 100 ? 100 : efficiency, false, meta); // Percentage score
-        setGameState('result');
     };
 
     return (
         <GameWrapper
             title="Tower Planning"
-            description="Move all disks to the rightmost tower. Larger disks cannot be placed on smaller ones."
-            onRestart={startGame}
-            score={`Moves: ${moves} (Par: ${LEVELS[levelIndex]?.par})`}
-            bestScore={bestScore ? `Best Efficiency: ${bestScore}%` : null}
+            description="Reconstruct the stack on the furthest node. Larger units cannot occupy smaller ones."
+            onRestart={() => setGameState('setup')}
+            score={`Moves: ${moves} / ${minMoves}`}
+            bestScore={bestScore ? `${bestScore}` : null}
+            sessionBest={sessionBest ? `${sessionBest}` : null}
         >
-            <div className="tower-container">
+            <div className="tower-container full-height">
                 {gameState === 'waiting' && (
-                    <div className="tower-intro">
-                        <h2>Tower of Hanoi</h2>
-                        <p>Test your planning depth and working memory.</p>
-                        <GlassButton onClick={startGame} size="large">Start Test</GlassButton>
+                    <div className="tower-overlay">
+                        <Layers size={80} className="tower-icon" />
+                        <h1 className="tower-title">SEQUENTIAL PLANNING</h1>
+                        <div className="tower-instructions">
+                            <p>TRANSFER STACK TO TERMINAL NODE (3).</p>
+                            <p>MOVEMENTS RESTRICTED BY UNIT HIERARCHY.</p>
+                            <p>OPTIMIZE FOR MINIMUM OPERATIONS.</p>
+                        </div>
+                        <button className="tower-btn-start" onClick={() => setGameState('setup')}>INITIATE SEQUENCE</button>
+                    </div>
+                )}
+
+                {gameState === 'setup' && (
+                    <div className="tower-setup">
+                        <h2>CONFIGURE COMPLEXITY</h2>
+                        <div className="disk-selector">
+                            {[3, 4, 5, 6, 7].map(num => (
+                                <button
+                                    key={num}
+                                    className="setup-btn"
+                                    onClick={() => startLevel(num)}
+                                >
+                                    {num} UNITS
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 )}
 
                 {gameState === 'playing' && (
-                    <div className="tower-play">
-                        <h3>Level {levelIndex + 1} ({LEVELS[levelIndex].disks} Disks)</h3>
-                        <div className="pegs-area">
-                            {towers.map((peg, i) => (
+                    <div className="tower-play-area">
+                        <div className="tower-hud">
+                            <div className="hud-metric">
+                                <span className="label">MOVES</span>
+                                <span className="value">{moves} <span className="sub">/ {minMoves}</span></span>
+                            </div>
+                            <div className="hud-metric">
+                                <span className="label">TIME</span>
+                                <span className="value">{timeElapsed}s</span>
+                            </div>
+                        </div>
+
+                        <div className="towers-stage">
+                            {towers.map((stack, i) => (
                                 <div
                                     key={i}
-                                    className={`peg-zone ${selectedDisk?.fromPeg === i ? 'source' : ''}`}
-                                    onClick={() => handlePegClick(i)}
+                                    className={`tower-zone ${selectedDisk?.fromTower === i ? 'source' : ''}`}
+                                    onClick={() => handleTowerClick(i)}
                                 >
-                                    <div className="peg-rod"></div>
-                                    <div className="disks-stack">
-                                        {peg.map(diskSize => (
-                                            <div
-                                                key={diskSize}
-                                                className={`disk size-${diskSize} ${selectedDisk?.val === diskSize ? 'selected' : ''}`}
-                                            // style={{ width: getDiskWidth(diskSize) }} // CSS better
-                                            ></div>
-                                        ))}
+                                    <div className="tower-rod"></div>
+                                    <div className="tower-base"></div>
+                                    <div className="tower-stack">
+                                        <AnimatePresence>
+                                            {stack.map((diskVal, idx) => {
+                                                const isSelected = selectedDisk?.val === diskVal && selectedDisk?.fromTower === i;
+                                                return (
+                                                    <motion.div
+                                                        key={`disk-${diskVal}`}
+                                                        className={`disk size-${diskVal} ${isSelected ? 'selected' : ''}`}
+                                                        layoutId={`disk-${diskVal}`}
+                                                        initial={false}
+                                                        animate={{
+                                                            y: isSelected ? -180 : 0,
+                                                            scale: isSelected ? 1.05 : 1
+                                                        }}
+                                                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                                    >
+                                                        <span className="disk-label">{diskVal}</span>
+                                                    </motion.div>
+                                                );
+                                            })}
+                                        </AnimatePresence>
                                     </div>
-                                    <div className="peg-base"></div>
+                                    <div className="tower-id">NODE {i + 1}</div>
                                 </div>
                             ))}
                         </div>
-                        {selectedDisk && <p className="tower-hint">Select a destination peg</p>}
                     </div>
                 )}
 
                 {gameState === 'result' && (
-                    <div className="tower-result">
-                        <h1>Planning Efficiency: {bestScore}%</h1>
-                        <p>You solved the puzzles with {totalMoves} moves.</p>
-                        <p>Perfect play requires {LEVELS.reduce((a, b) => a + b.par, 0)} moves.</p>
-                        <GlassButton onClick={startGame}>Replay</GlassButton>
+                    <div className="tower-result-panel">
+                        <div className="result-display">
+                            <span className="result-label">OPTIMIZATION SCORE</span>
+                            <span className="result-val">{Math.floor((minMoves / moves) * 100)}%</span>
+                        </div>
+
+                        <div className="tower-analysis-grid">
+                            <div className="analysis-item">
+                                <span className="label">MOVES</span>
+                                <span className="value">{moves}</span>
+                            </div>
+                            <div className="analysis-item">
+                                <span className="label">MINIMUM</span>
+                                <span className="value">{minMoves}</span>
+                            </div>
+                            <div className="analysis-item">
+                                <span className="label">TIME</span>
+                                <span className="value">{timeElapsed}s</span>
+                            </div>
+                        </div>
+
+                        <button className="tower-retry-btn" onClick={() => setGameState('setup')}>
+                            RECONFIGURE
+                        </button>
                     </div>
                 )}
             </div>

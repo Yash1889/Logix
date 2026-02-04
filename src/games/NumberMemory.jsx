@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import GameWrapper from '../components/GameWrapper';
 import { useGameScore } from '../hooks/useGameScore';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Hash, Delete } from 'lucide-react';
 import './NumberMemory.css';
 
 export default function NumberMemory() {
@@ -10,6 +11,7 @@ export default function NumberMemory() {
     const [level, setLevel] = useState(1);
     const [number, setNumber] = useState('');
     const [userInput, setUserInput] = useState('');
+    const inputRef = useRef(null);
 
     const generateNumber = (length) => {
         let num = '';
@@ -26,31 +28,42 @@ export default function NumberMemory() {
         setGameState('showing');
         setUserInput('');
 
-        // Time to show: 1s + (0.5s per digit) -> Roughly HB scaling
-        const showTime = 1000 + (length * 600);
+        // Standard scaling: 1000ms base + 1000ms per digit is usually too easy.
+        // HB Logic: Rapid flash? Or reasonable?
+        // Let's do: 2s base + 0.5s per digit.
+        const showTime = 1500 + (length * 700);
 
         setTimeout(() => {
             setGameState('input');
+            setTimeout(() => inputRef.current?.focus(), 50);
         }, showTime);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (userInput === number) {
+
+        // Normalize input
+        const normalized = userInput.replace(/\s/g, '');
+
+        if (normalized === number) {
             // Correct
             setLevel(prev => prev + 1);
-            setGameState('showing'); // Or 'correct' feedback state
+            setGameState('showing');
             setTimeout(startLevel, 500);
         } else {
             // Wrong
-            const meta = {
-                correctNumber: number,
-                userGuess: userInput,
-                digits: level
-            };
-            saveScore(level, false, meta); // Higher is better
-            setGameState('result');
+            endGame();
         }
+    };
+
+    const endGame = () => {
+        const meta = {
+            correctNumber: number,
+            userGuess: userInput,
+            digits: level
+        };
+        saveScore(level, false, meta); // Higher is better
+        setGameState('result');
     };
 
     const startGame = () => {
@@ -61,60 +74,78 @@ export default function NumberMemory() {
     return (
         <GameWrapper
             title="Number Memory"
-            description="Memorize the number shown."
+            description="Memorize the sequence, then input it."
             onRestart={startGame}
             score={`Level ${level}`}
             bestScore={bestScore ? `Lvl ${bestScore}` : null}
             sessionBest={sessionBest ? `Lvl ${sessionBest}` : null}
         >
-            <div className="number-memory-container">
+            <div className="nm-container">
                 {gameState === 'waiting' && (
-                    <button className="nm-btn start" onClick={startGame}>Start</button>
+                    <div className="nm-overlay">
+                        <Hash size={64} className="nm-icon" />
+                        <h2>DIGIT RETENTION TEST</h2>
+                        <p>The sequence will lengthen progressively.</p>
+                        <button className="nm-btn-start" onClick={startGame}>INITIALIZE</button>
+                    </div>
                 )}
 
                 {gameState === 'showing' && (
-                    <div className="nm-display">
-                        <motion.h1
-                            initial={{ opacity: 0, scale: 0.5 }}
+                    <div className="nm-play">
+                        <motion.div
+                            className="nm-number-display"
+                            initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0 }}
                         >
                             {number}
-                        </motion.h1>
-                        <div className="nm-bar" style={{ animationDuration: `${1000 + (level * 600)}ms` }}></div>
+                        </motion.div>
+                        <div className="nm-timer-bar">
+                            <div className="nm-progress" style={{ animationDuration: `${1500 + (level * 700)}ms` }}></div>
+                        </div>
                     </div>
                 )}
 
                 {gameState === 'input' && (
-                    <form onSubmit={handleSubmit} className="nm-form">
-                        <h2>What was the number?</h2>
-                        <input
-                            type="text"
-                            pattern="[0-9]*"
-                            value={userInput}
-                            onChange={(e) => setUserInput(e.target.value)}
-                            autoFocus
-                            className="nm-input"
-                        />
-                        <button type="submit" className="nm-btn">Submit</button>
-                    </form>
+                    <div className="nm-input-phase">
+                        <h2 className="nm-prompt">INPUT SEQUENCE</h2>
+                        <form onSubmit={handleSubmit} className="nm-form">
+                            <input
+                                ref={inputRef}
+                                type="text"
+                                pattern="[0-9]*"
+                                value={userInput}
+                                onChange={(e) => setUserInput(e.target.value)}
+                                className="nm-input"
+                                autoComplete="off"
+                                placeholder="#"
+                            />
+                            <button type="submit" className="nm-btn-submit">CONFIRM</button>
+                        </form>
+                        <p className="nm-hint">Press Enter to Submit</p>
+                    </div>
                 )}
 
                 {gameState === 'result' && (
-                    <div className="nm-result">
-                        <h1>Game Over</h1>
-                        <p>Level Reached: {level}</p>
-                        <div className="nm-comparison">
-                            <div>
-                                <span>Number:</span>
-                                <p className="correct">{number}</p>
+                    <div className="nm-result-panel">
+                        <div className="result-display">
+                            <span className="result-val">{level}</span>
+                            <span className="result-unit">DIGITS</span>
+                        </div>
+
+                        <div className="nm-comparison-box">
+                            <div className="nm-cmp-row">
+                                <span className="label">SEQUENCE</span>
+                                <span className="value correct">{number}</span>
                             </div>
-                            <div>
-                                <span>Your Answer:</span>
-                                <p className="wrong">{userInput}</p>
+                            <div className="nm-cmp-row">
+                                <span className="label">INPUT</span>
+                                <span className="value wrong">{userInput}</span>
                             </div>
                         </div>
-                        <button className="nm-btn" onClick={startGame}>Try Again</button>
+
+                        <button className="nm-retry-btn" onClick={startGame}>
+                            RE-INITIALIZE
+                        </button>
                     </div>
                 )}
             </div>
